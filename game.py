@@ -26,36 +26,42 @@ class Game:
         quit = Command("quit", " : quitter le jeu", Actions.quit, 0)
         self.commands["quit"] = quit
         go = Command("go", " <direction> : se déplacer dans une direction cardinale (N, E, S, O)", Actions.go, 1)
-        self.commands["go"] = go
+    
         
         # Setup rooms
 
-        forest = Room("Forest", "dans une forêt enchantée. Vous entendez une brise légère à travers la cime des arbres.")
-        self.rooms.append(forest)
-        tower = Room("Tower", "dans une immense tour en pierre qui s'élève au dessus des nuages.")
-        self.rooms.append(tower)
-        cave = Room("Cave", "dans une grotte profonde et sombre. Des voix semblent provenir des profondeurs.")
+        hall = Room("Hall", "dans une grande salle de receptions reliant beaucoup de piece entre elles.")
+        self.rooms.append(hall)
+        diningroom = Room("Diningroom", "dans une immense salle avec une grande table rectangulaire et des dizaines de chaises anciennes.")
+        self.rooms.append(diningroom)
+        cave = Room("Cave", "dans une cave où il fait très sombre et où l'atmosphère pensant, une menace à l'air de planer autour de nous.")
         self.rooms.append(cave)
-        cottage = Room("Cottage", "dans un petit chalet pittoresque avec un toit de chaume. Une épaisse fumée verte sort de la cheminée.")
-        self.rooms.append(cottage)
-        swamp = Room("Swamp", "dans un marécage sombre et ténébreux. L'eau bouillonne, les abords sont vaseux.")
-        self.rooms.append(swamp)
-        castle = Room("Castle", "dans un énorme château fort avec des douves et un pont levis. Sur les tours, des flèches en or massif.")
-        self.rooms.append(castle)
+        kitchen = Room("Kitchen", "dans une cuisine où l'odeur des plats est reconfortant, on peut y voir des ustensiles en fonte et en bronze.")
+        self.rooms.append(kitchen)
+        coldroom = Room("Coldroom", "dans une chambre froide où la nourriture est stockée, l'endroit est assez préoccupant.")
+        self.rooms.append(coldroom)
+        livingroom = Room("Livingroom", "dans une grande salle avec des canapé, une cheminée et un endroit pour grignotter avec des meubles rustiques.")
+        self.rooms.append(livingroom)
+        library = Room("Library", "dans une énorme bibliothèque avec plusieurs étages et des livres qui paraissent très ancien.")
+        self.rooms.append(library)
+        stairs = Room("Stairs", "un grand esclalier reliant l'étage au hall d'entrée fait de marbre et de bois ancien.")
+        self.rooms.append(stairs)
 
         # Create exits for rooms
 
-        forest.exits = {"N" : cave, "E" : None, "S" : castle, "O" : None}
-        tower.exits = {"N" : cottage, "E" : None, "S" : None, "O" : None}
-        cave.exits = {"N" : None, "E" : cottage, "S" : forest, "O" : None}
-        cottage.exits = {"N" : None, "E" : None, "S" : tower, "O" : cave}
-        swamp.exits = {"N" : tower, "E" : None, "S" : None, "O" : castle}
-        castle.exits = {"N" : forest, "E" : swamp, "S" : None, "O" : None}
+        hall.exits = {"N" : None, "E" : livingroom, "S" : None, "O" : diningroom, "U" : None, "D" : None}
+        diningroom.exits = {"N" : kitchen, "E" : hall, "S" : None, "O" : None, "U" : None, "D" : None}
+        livingroom.exits = {"N" : None, "E" : None, "S" : None, "O" : hall, "U" : None, "D" : None}
+        cave.exits = {"N" : None, "E" : None, "S" : None, "O" : coldroom,"U" : None, "D" : None}
+        kitchen.exits = {"N" : coldroom, "E" : None, "S" : diningroom, "O" : None, "U" : None, "D" : None}
+        coldroom.exits = {"N" : None, "E" : cave, "S" : kitchen, "O" : None, "U" : None, "D" : None}
+        library.exits = {"N" : None, "E" : None, "S" : None, "O" : hall, "U" : None, "D" : None}
+        stairs.exits = {"N" : None, "E" : None, "S" : hall, "O" : None, "U" : None, "D" : None}
 
         # Setup player and starting room
 
         self.player = Player(input("\nEntrez votre nom: "))
-        self.player.current_room = swamp
+        self.player.current_room = hall
 
     # Play the game
     def play(self):
