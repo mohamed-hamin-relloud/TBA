@@ -22,12 +22,16 @@ class Game:
         # Setup commands
 
         help = Command("help", " : afficher cette aide", Actions.help, 0)
-        self.commands["help"] = help
         quit = Command("quit", " : quitter le jeu", Actions.quit, 0)
-        self.commands["quit"] = quit
         go = Command("go", " <direction> : se déplacer dans une direction cardinale (N, E, S, O)", Actions.go, 1)
-    
-        
+        Directions = [["Nord", "nord", "NORD", "n", "N"], ["Sud", "sud", "SUD", "S", "s"], ["Ouest", "ouest", "OUEST", "O", "o"], ["EST", "est", "Est", "E", "e"], ["Up", "up", "UP", "u", "U"], ["Down", "DOWN", "down", "D", "d"]]
+        directions = { Directions[i][j] for i in range(6) for j in range(5)}
+        directions.add("go")
+        self.commands = dict([(Directions[i][j], go) for i in range(6) for j in range(5)])
+        self.commands["go"] = go
+        self.commands["help"] = help
+        self.commands["quit"] = quit
+       
         # Setup rooms
 
         hall = Room("Hall", "dans une grande salle de receptions reliant beaucoup de piece entre elles.")

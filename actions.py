@@ -52,12 +52,16 @@ class Actions:
             command_word = list_of_words[0]
             print(MSG1.format(command_word=command_word))
             return False
+        
 
         # Get the direction from the list of words.
         direction = list_of_words[1]
         # Move the player in the direction specified by the parameter.
-        player.move(direction)
-        return True
+        if direction not in "NSEOUD":
+            print(f"{direction} inacessible, vous n'avancez pas !")
+        else:
+            player.move(direction)
+            return True
 
     def quit(game, list_of_words, number_of_parameters):
         """
