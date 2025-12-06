@@ -23,16 +23,15 @@ class Game:
 
         help = Command("help", " : afficher cette aide", Actions.help, 0)
         quit = Command("quit", " : quitter le jeu", Actions.quit, 0)
-        go = Command("go", " <direction> : se déplacer dans une direction cardinale (N, E, S, O)", Actions.go, 1)
-        Directions = [["Nord", "nord", "NORD", "n", "N"], ["Sud", "sud", "SUD", "S", "s"], ["Ouest", "ouest", "OUEST", "O", "o"], ["EST", "est", "Est", "E", "e"], ["Up", "up", "UP", "u", "U"], ["Down", "DOWN", "down", "D", "d"]]
-        directions = { Directions[i][j] for i in range(6) for j in range(5)}
+        go = Command("go", " <direction> : se déplacer dans une direction cardinale (N, E, S, O)", Actions.go, 0)
+        Directions = ['nord', 'sud', 'ouest', 'est', 'up','down']
+        directions = { Directions[i] for i in range(6)}
         directions.add("go")
-        self.commands = dict([(Directions[i][j], go) for i in range(6) for j in range(5)])
+        self.commands = dict([(Directions[i], go) for i in range(6)])
         self.commands["go"] = go
         self.commands["help"] = help
         self.commands["quit"] = quit
        
-        # Setup rooms
 
         hall = Room("Hall", "dans une grande salle de receptions reliant beaucoup de piece entre elles.")
         self.rooms.append(hall)
@@ -53,15 +52,15 @@ class Game:
 
         # Create exits for rooms
 
-        hall.exits = {"N" : None, "E" : livingroom, "S" : None, "O" : diningroom, "U" : None, "D" : None}
-        diningroom.exits = {"N" : kitchen, "E" : hall, "S" : None, "O" : None, "U" : None, "D" : None}
-        livingroom.exits = {"N" : None, "E" : None, "S" : None, "O" : hall, "U" : None, "D" : None}
-        cave.exits = {"N" : None, "E" : None, "S" : None, "O" : coldroom,"U" : None, "D" : None}
-        kitchen.exits = {"N" : coldroom, "E" : None, "S" : diningroom, "O" : None, "U" : None, "D" : None}
-        coldroom.exits = {"N" : None, "E" : cave, "S" : kitchen, "O" : None, "U" : None, "D" : None}
-        library.exits = {"N" : None, "E" : None, "S" : None, "O" : hall, "U" : None, "D" : None}
-        stairs.exits = {"N" : None, "E" : None, "S" : hall, "O" : None, "U" : None, "D" : None}
-
+        hall.exits = { "N" : None, "E" : livingroom, "S" : None, "O" : diningroom , "Up" : None, "Down" : None}
+        diningroom.exits = {"N" : kitchen, "E" : hall,  "S" : None,"O" : None, "Up" : None, "Down" : None}
+        livingroom.exits = { "N" : None, "E" : None,  "S" : None, "O" : hall, "Up" : None, "Down" : None}
+        cave.exits = { "N" : None , "E" : None,  "S" : None, "O" : coldroom,"Up" : None, "Down" : None}
+        kitchen.exits = { "N" : coldroom , "E" : None, "S" : diningroom, "O" : None, "Up" : None, "Down" : None}
+        coldroom.exits = { "N" : None,  "S" : kitchen, "O" : None, "Up" : None, "Down" : None}
+        library.exits = { "N" : None , "E" : None,  "S" : None,  "O" : hall, "Up" : None, "Down" : None}
+        stairs.exits = { "N" : None, "E" : None, "S" : hall, "O" : None, "Up" : None, "Down" : None}
+        
         # Setup player and starting room
 
         self.player = Player(input("\nEntrez votre nom: "))
@@ -74,7 +73,7 @@ class Game:
         # Loop until the game is finished
         while not self.finished:
             # Get the command from the player
-            self.process_command(input("> "))
+            self.process_command(input(">"))
         return None
 
     # Process the command entered by the player
@@ -85,6 +84,7 @@ class Game:
 
         command_word = list_of_words[0]
 
+        
         # If the command is not recognized, print an error message
         if command_word=="":
             print(f"\n ")

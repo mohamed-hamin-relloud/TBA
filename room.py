@@ -12,7 +12,7 @@ class Room:
     def get_exit(self, direction):
 
         # Return the room in the given direction if it exists.
-        if direction in self.exits.keys():
+        if direction in self.exits.keys()  :
             return self.exits[direction]
         else:
             return None
