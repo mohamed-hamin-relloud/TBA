@@ -61,7 +61,6 @@ class Actions:
          # Move the player in the direction specified by the parameter
         if direction != list_of_words[1] and list_of_words[1].upper() and list_of_words[1].lower() and list_of_words[1][0] and list_of_words[1][0].upper() and list_of_words[1][0].lower():
             print(f"{direction} inacessible, vous n'avancez pas !")
-            
         else:
             player.move(direction)
             return True
@@ -144,3 +143,19 @@ class Actions:
             print("\t- " + str(command))
         print()
         return True
+    
+    def back(game, list_of_words, number_of_parameters):
+        player = game.player
+        l = len(list_of_words)
+        if l != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG0.format(command_word=command_word))
+            return False
+        else:
+            
+        action = list_of_words[0]
+        
+        return True
+
+        
+

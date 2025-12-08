@@ -27,13 +27,14 @@ class Game:
 
         direction_description = "(N, S, E, O, U, D)" + str(Directions)
         go = Command("go", " <direction> : se déplacer dans une direction cardinale "+direction_description, Actions.go, 1)
-        
+        back = Command("back", "reviens en arriere", Actions.back, 0)
         directions = set(Directions)
         directions.add("go")
         # self.commands = dict([(Directions[i], go) for i in range(6)])
         self.commands["go"] = go
         self.commands["help"] = help
         self.commands["quit"] = quit
+        self.commands["back"] = back
        
 
         hall = Room("Hall", "dans une grande salle de receptions reliant beaucoup de piece entre elles.")
