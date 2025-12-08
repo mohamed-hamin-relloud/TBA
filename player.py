@@ -2,15 +2,13 @@
 class Player():
 
     # Define the constructor.
-    def __init__(self, name):
+    def __init__(self, name, history):
         self.name = name
         self.current_room = None
+        self.history = []
+
     
-    def convert(self, s):
-        if self.s == self.s[0] or self.s[0].upper() or self.s[0].lower or self.s.upper() or self.s.lower() or self.s:
-            self.s = self.s[0].upper()
-            return self.s
-        
+
     # Define the move method.
     def move(self, direction):
         # Get the next room from the exits dictionary of the current room.

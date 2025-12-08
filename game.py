@@ -23,7 +23,7 @@ class Game:
 
         help = Command("help", " : afficher cette aide", Actions.help, 0)
         quit = Command("quit", " : quitter le jeu", Actions.quit, 0)
-        go = Command("go", " <direction> : se déplacer dans une direction cardinale (N, E, S, O)", Actions.go, 0)
+        go = Command("go", " <direction> : se déplacer dans une direction cardinale (N, E, S, O)", Actions.go, 1)
         Directions = ['nord', 'sud', 'ouest', 'est', 'up','down']
         directions = { Directions[i] for i in range(6)}
         directions.add("go")
@@ -52,14 +52,14 @@ class Game:
 
         # Create exits for rooms
 
-        hall.exits = { "N" : None, "E" : livingroom, "S" : None, "O" : diningroom , "Up" : None, "Down" : None}
-        diningroom.exits = {"N" : kitchen, "E" : hall,  "S" : None,"O" : None, "Up" : None, "Down" : None}
-        livingroom.exits = { "N" : None, "E" : None,  "S" : None, "O" : hall, "Up" : None, "Down" : None}
-        cave.exits = { "N" : None , "E" : None,  "S" : None, "O" : coldroom,"Up" : None, "Down" : None}
-        kitchen.exits = { "N" : coldroom , "E" : None, "S" : diningroom, "O" : None, "Up" : None, "Down" : None}
-        coldroom.exits = { "N" : None,  "S" : kitchen, "O" : None, "Up" : None, "Down" : None}
-        library.exits = { "N" : None , "E" : None,  "S" : None,  "O" : hall, "Up" : None, "Down" : None}
-        stairs.exits = { "N" : None, "E" : None, "S" : hall, "O" : None, "Up" : None, "Down" : None}
+        hall.exits = { "N" : None, "E" : livingroom, "S" : None, "O" : diningroom , "U" : None, "D" : None}
+        diningroom.exits = {"N" : kitchen, "E" : hall,  "S" : None,"O" : None, "U" : None, "D" : None}
+        livingroom.exits = { "N" : None, "E" : None,  "S" : None, "O" : hall, "U" : None, "D" : None}
+        cave.exits = { "N" : None , "E" : None,  "S" : None, "O" : coldroom,"U" : None, "D" : None}
+        kitchen.exits = { "N" : coldroom , "E" : None, "S" : diningroom, "O" : None, "U" : None, "D" : None}
+        coldroom.exits = { "N" : None,  "S" : kitchen, "O" : None, "U" : None, "D" : None}
+        library.exits = { "N" : None , "E" : None,  "S" : None,  "O" : hall, "U" : None, "D" : None}
+        stairs.exits = { "N" : None, "E" : None, "S" : hall, "O" : None, "U" : None, "D" : None}
         
         # Setup player and starting room
 
