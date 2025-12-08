@@ -18,16 +18,19 @@ class Game:
     
     # Setup the game
     def setup(self):
+        Directions = ['nord', 'sud', 'ouest', 'est', 'up','down']
 
         # Setup commands
 
         help = Command("help", " : afficher cette aide", Actions.help, 0)
         quit = Command("quit", " : quitter le jeu", Actions.quit, 0)
-        go = Command("go", " <direction> : se déplacer dans une direction cardinale (N, E, S, O)", Actions.go, 1)
-        Directions = ['nord', 'sud', 'ouest', 'est', 'up','down']
-        directions = { Directions[i] for i in range(6)}
+
+        direction_description = "(N, S, E, O, U, D)" + str(Directions)
+        go = Command("go", " <direction> : se déplacer dans une direction cardinale "+direction_description, Actions.go, 1)
+        
+        directions = set(Directions)
         directions.add("go")
-        self.commands = dict([(Directions[i], go) for i in range(6)])
+        # self.commands = dict([(Directions[i], go) for i in range(6)])
         self.commands["go"] = go
         self.commands["help"] = help
         self.commands["quit"] = quit
@@ -65,6 +68,7 @@ class Game:
 
         self.player = Player(input("\nEntrez votre nom: "))
         self.player.current_room = hall
+        
 
     # Play the game
     def play(self):
@@ -74,6 +78,7 @@ class Game:
         while not self.finished:
             # Get the command from the player
             self.process_command(input(">"))
+
         return None
 
     # Process the command entered by the player
@@ -94,6 +99,7 @@ class Game:
         else:
             command = self.commands[command_word]
             command.action(self, list_of_words, command.number_of_parameters)
+            
 
     # Print the welcome message
     def print_welcome(self):
