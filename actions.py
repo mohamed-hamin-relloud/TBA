@@ -10,6 +10,7 @@
 # The error message is different depending on the number of parameters expected by the command.
 
 
+
 # The error message is stored in the MSG0 and MSG1 variables and formatted with the command_word variable, the first word in the command.
 # The MSG0 variable is used when the command does not take any parameter.
 MSG0 = "\nLa commande '{command_word}' ne prend pas de paramètre.\n"
@@ -52,12 +53,18 @@ class Actions:
             command_word = list_of_words[0]
             print(MSG1.format(command_word=command_word))
             return False
+        
 
         # Get the direction from the list of words.
         direction = list_of_words[1]
-        # Move the player in the direction specified by the parameter.
-        player.move(direction)
-        return True
+        
+         # Move the player in the direction specified by the parameter
+        if direction != list_of_words[1] and list_of_words[1].upper() and list_of_words[1].lower() and list_of_words[1][0] and list_of_words[1][0].upper() and list_of_words[1][0].lower():
+            print(f"{direction} inacessible, vous n'avancez pas !")
+            
+        else:
+            player.move(direction)
+            return True
 
     def quit(game, list_of_words, number_of_parameters):
         """

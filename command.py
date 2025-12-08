@@ -17,6 +17,9 @@ class Command:
     Examples:
 
     >>> from actions import go
+    >>> command = Command("", "n'affiche rien", None, 1)
+    >>> command.command_word
+    ' '
     >>> command = Command("go", "Permet de se déplacer dans une direction.", go, 1)
     >>> command.command_word
     'go'
