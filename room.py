@@ -7,8 +7,20 @@ class Room:
         self.name = name
         self.description = description
         self.exits = {}
+        self.inventory = {}
 
     # Define the inventory of the current room
+    def get_inventory(self):
+        dict_inventory= self.inventory
+        if dict_inventory == {}:
+            return "il n'y a rien ici"
+        print("la pièce contient :\n")
+        for i in dict_inventory:
+            if i == None:
+                continue
+            else :
+                print(f"\t {dict_inventory.get(i).description}")
+        return ""
 
         
     
