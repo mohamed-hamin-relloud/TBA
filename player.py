@@ -11,6 +11,22 @@ class Player():
             self.history = history
 
 
+    def deplacer_player(self, newroom):
+        self.newroom= newroom
+    
+    def get_history(self):
+        if self.current_room is None:
+            return "le joueur n'a pas encore commencer à explorer."
+        if self.current_room in self.historique_room:
+            message= "vous avez déjà visité les pièces suivantes:\n"
+            message+= ",".join(self.historique_room)
+            return message
+        else:
+            self.historique_room.add(self.current_room)
+            message= f"vous êtes dans la pièce :{self.current_room}\n"
+            message+= "vous pouvez aller dans les directions suivantes : nord, sud,est, ouest."
+            return message
+
     def get_history(self):
         set_history = set(self.history)
         print("vous avez visité les lieux suivant :\n")
