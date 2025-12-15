@@ -3,10 +3,15 @@
 class Room:
 
     # Define the constructor. 
-    def __init__(self, name, description):
+    def __init__(self, name, description, inventory):
         self.name = name
         self.description = description
         self.exits = {}
+        self.inventory = {}
+
+    # Define the inventory of the current room
+    def get_inventory(self):
+        
     
     # Define the get_exit method.
     def get_exit(self, direction):
