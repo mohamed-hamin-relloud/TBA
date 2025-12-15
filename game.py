@@ -6,6 +6,7 @@ from room import Room
 from player import Player
 from command import Command
 from actions import Actions
+from item import Item
 
 class Game:
 
@@ -26,8 +27,12 @@ class Game:
         quit = Command("quit", " : quitter le jeu", Actions.quit, 0)
 
         direction_description = "(N, S, E, O, U, D)" + str(Directions)
+       
         go = Command("go", " <direction> : se déplacer dans une direction cardinale "+direction_description, Actions.go, 1)
         back = Command("back", "reviens en arriere", Actions.back, 0)
+        look = Command("look", "voir les objets dans la pièce", Actions.look, 0)
+        take = Command("take", "prendre les objets selectionnés", Actions.take, 1)
+        
         directions = set(Directions)
         directions.add("go")
         # self.commands = dict([(Directions[i], go) for i in range(6)])
@@ -35,15 +40,24 @@ class Game:
         self.commands["help"] = help
         self.commands["quit"] = quit
         self.commands["back"] = back
+        self.commands["look"] = look
+        self.commands["take"] = take
+
+        #Create Item
+
+        sword = Item("sword", "épée lourde ressemblant à celle des rois d'antan...",20)
+        orbe_de_vie = Item("orbe de vie", "orbe rayonnant une énergie vitale débordante...",1)
+        grimoire = Item("grimoire", "gros livre poussièreux en cuire", 6)
        
+        #Create Room
 
         hall = Room("Hall", "dans une grande salle de receptions reliant beaucoup de piece entre elles.")
         self.rooms.append(hall)
-        diningroom = Room("Diningroom", "dans une immense salle avec une grande table rectangulaire et des dizaines de chaises anciennes.")
+        diningroom = Room("Diningroom", "dans une immense salle avec une grande table rectangulaire et des dizaines de chaises anciennes.", {"sword": sword})
         self.rooms.append(diningroom)
         cave = Room("Cave", "dans une cave où il fait très sombre et où l'atmosphère pensant, une menace à l'air de planer autour de nous.")
         self.rooms.append(cave)
-        kitchen = Room("Kitchen", "dans une cuisine où l'odeur des plats est reconfortant, on peut y voir des ustensiles en fonte et en bronze.")
+        kitchen = Room("Kitchen", "dans une cuisine où l'odeur des plats est reconfortant, on peut y voir des ustensiles en fonte et en bronze.", {"grimoire": grimoire, "orbe de vie" : orbe_de_vie})
         self.rooms.append(kitchen)
         coldroom = Room("Coldroom", "dans une chambre froide où la nourriture est stockée, l'endroit est assez préoccupant.")
         self.rooms.append(coldroom)

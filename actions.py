@@ -160,7 +160,39 @@ class Actions:
             print(room.get_long_description())
             player.current_room = room
             player.get_history()
+
+    def look(game, list_of_words, number_of_parameter):
+        player = game.player
+        actual_room = game.player.current_room
+        if actual_room.inventory == {}:
+            print("\nvous ne voyez pas d'objet particulier dans cette pièce\n")
+            return False
+        else:
+            print("\nles objets que vous voyez sont :\n")
+            for i in actual_room.inventory:
+                print(f"\t - {actual_room.inventory.get(i).description}")
+            return True
+    
+    def take(game, list_of_words, number_of_paramater):
+        player = game.player
+        actual_room = player.current_room
+        stuff = player.inventory
+        if actual_room.inventory == {}:
+            print("il n'y a rien ici")
+            return False
+        
+        items = list_of_words[1]
+
+        for i in actual_room.inventory:
+            if items != i:
+                print("il n'y a pas d'objet de la sorte ici !")
+                return False
+            else:
+                stuff[i] = actual_room.inventory.get(i)
+                del actual_room.inventory[i]
+
             
+
                    
 
                     

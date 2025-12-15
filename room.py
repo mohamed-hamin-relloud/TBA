@@ -3,11 +3,16 @@
 class Room:
 
     # Define the constructor. 
-    def __init__(self, name, description):
+    def __init__(self, name, description, inventory = None):
         self.name = name
         self.description = description
         self.exits = {}
-        self.inventory = {}
+        if not inventory:
+            self.inventory = {}
+        else:
+            self.inventory = inventory
+
+        
 
     # Define the inventory of the current room
     def get_inventory(self):
