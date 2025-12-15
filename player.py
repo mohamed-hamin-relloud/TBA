@@ -2,10 +2,14 @@
 class Player():
 
     # Define the constructor.
-    def __init__(self, name):
+    def __init__(self, name, history = None):
         self.name = name
         self.current_room = None
-        self.history = []
+        if not history:
+            self.history = []
+        else:
+            self.history = history
+
 
     def deplacer_player(self, newroom):
         self.newroom= newroom
@@ -22,6 +26,7 @@ class Player():
             message= f"vous êtes dans la pièce :{self.current_room}\n"
             message+= "vous pouvez aller dans les directions suivantes : nord, sud,est, ouest."
             return message
+
        
     
        
