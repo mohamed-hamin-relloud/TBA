@@ -2,17 +2,24 @@
 class Player():
 
     # Define the constructor.
-    def __init__(self, name):
+    def __init__(self, name, history = None):
         self.name = name
         self.current_room = None
-        self.history = []
+        if not history:
+            self.history = []
+        else:
+            self.history = history
+
 
     def get_history(self):
         set_history = set(self.history)
         print("vous avez visité les lieux suivant :\n")
         for i in set_history:
-            print(f"\t {i.description}") 
-        return " "
+            if i == None:
+                continue
+            else :
+                print(f"\t {i.description}")
+        return ""
        
     
                     
@@ -30,8 +37,6 @@ class Player():
         direction = direction[0].upper()
         next_room = self.current_room.exits[direction]
         self.history.append(next_room)
-       
-        if direction = 
 
         # If the next room is None, print an error message and return False.
         if next_room is None:
