@@ -22,17 +22,8 @@ class Player():
             message= f"vous êtes dans la pièce :{self.current_room}\n"
             message+= "vous pouvez aller dans les directions suivantes : nord, sud,est, ouest."
             return message
-
-    def get_history(self):
-        set_history = set(self.history)
-        print("vous avez visité les lieux suivant :\n")
-        for i in set_history:
-            print(f"\t {i.description}") 
-        return " "
        
     
-                    
-        
        
     
 
@@ -46,8 +37,6 @@ class Player():
         direction = direction[0].upper()
         next_room = self.current_room.exits[direction]
         self.history.append(next_room)
-       
-        if direction = 
 
         # If the next room is None, print an error message and return False.
         if next_room is None:
