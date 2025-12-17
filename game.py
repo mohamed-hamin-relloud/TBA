@@ -16,6 +16,7 @@ class Game:
         self.rooms = []
         self.commands = {}
         self.player = None
+        self.command_teleporter = {}
     
     # Setup the game
     def setup(self):
@@ -32,7 +33,11 @@ class Game:
         back = Command("back", "reviens en arriere", Actions.back, 0)
         look = Command("look", "voir les objets dans la pièce", Actions.look, 0)
         take = Command("take", "prendre les objets selectionnés", Actions.take, 1)
+        drop = Command('drop', 'déposer les objets de votre inventaire', Actions.drop, 1)
+        check = Command("check", "voir les objets dans la pièce", Actions.check, 0)
+        teleport = Command("teleport","téléporter vers un endroits déjà visité", Actions.teleportation,0)
         
+
         directions = set(Directions)
         directions.add("go")
         # self.commands = dict([(Directions[i], go) for i in range(6)])
@@ -42,22 +47,28 @@ class Game:
         self.commands["back"] = back
         self.commands["look"] = look
         self.commands["take"] = take
+        self.commands["drop"] = drop 
+        self.commands['check'] = check
+        
+        
+        
 
         #Create Item
 
         sword = Item("sword", "épée lourde ressemblant à celle des rois d'antan...",20)
-        orbe_de_vie = Item("orbe de vie", "orbe rayonnant une énergie vitale débordante...",1)
+        orbe_de_vie = Item("orbe de vie", "orbe rayonnant une énergie vitale débordante...",9)
         grimoire = Item("grimoire", "gros livre poussièreux en cuire", 6)
+        teleporter = Item("teleporter", "objet de téléportation", 0.2)
        
         #Create Room
 
         hall = Room("Hall", "dans une grande salle de receptions reliant beaucoup de piece entre elles.")
         self.rooms.append(hall)
-        diningroom = Room("Diningroom", "dans une immense salle avec une grande table rectangulaire et des dizaines de chaises anciennes.", {"sword": sword})
+        diningroom = Room("Diningroom", "dans une immense salle avec une grande table rectangulaire et des dizaines de chaises anciennes.", {"sword": sword, "teleporter" : teleporter})
         self.rooms.append(diningroom)
         cave = Room("Cave", "dans une cave où il fait très sombre et où l'atmosphère pensant, une menace à l'air de planer autour de nous.")
         self.rooms.append(cave)
-        kitchen = Room("Kitchen", "dans une cuisine où l'odeur des plats est reconfortant, on peut y voir des ustensiles en fonte et en bronze.", {"grimoire": grimoire, "orbe de vie" : orbe_de_vie})
+        kitchen = Room("Kitchen", "dans une cuisine où l'odeur des plats est reconfortant, on peut y voir des ustensiles en fonte et en bronze.", {"grimoire": grimoire, "orbe-de-vie" : orbe_de_vie})
         self.rooms.append(kitchen)
         coldroom = Room("Coldroom", "dans une chambre froide où la nourriture est stockée, l'endroit est assez préoccupant.")
         self.rooms.append(coldroom)
@@ -108,6 +119,7 @@ class Game:
         # If the command is not recognized, print an error message
         if command_word=="":
             print(f"\n ")
+        elif command_word not in 
         elif command_word not in self.commands.keys():
             print(f"\nCommande '{command_word}' non reconnue. Entrez 'help' pour voir la liste des commandes disponibles.\n")
         # If the command is recognized, execute it
