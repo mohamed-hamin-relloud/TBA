@@ -16,7 +16,7 @@ class Game:
         self.rooms = []
         self.commands = {}
         self.player = None
-        self.command_teleporter = {}
+
     
     # Setup the game
     def setup(self):

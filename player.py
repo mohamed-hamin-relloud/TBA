@@ -2,7 +2,7 @@
 class Player():
 
     # Define the constructor.
-    def __init__(self, name, history = None, max_weight = 30, charge = None):
+    def __init__(self, name, history = None, max_weight = 30):
         self.name = name
         self.current_room = None
         self.max_weight = max_weight
@@ -11,10 +11,7 @@ class Player():
             self.history = []
         else:
             self.history = history
-        if not charge:
-            self.charge = []
-        else:
-            self.charge = charge
+       
 
             
     def get_history(self):

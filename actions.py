@@ -257,52 +257,12 @@ class Actions:
         else:
             print("\nvous disposez des objets suivant :")
             for i in bag:
-                if i != 'teleporter':
-                    print(f"\t - {bag.get(i).name} : {bag.get(i).description}")
-                else:
-                    print(f"\t - {bag.get(i).name} ( A : charger emplacement) : {bag.get(i).description}")
-            print("")
-        
-      
-        a = input(">")
-
-        if a =='A':
-            set_= set(player.charge)
-            set_.add(game.player.current_room)
-            player.charge = list(set_)
-            print(3*"...\n",f"vous avez chargé {game.player.current_room.name}.")
+                print(f"\t - {bag.get(i).name} : {bag.get(i).description}")
             return True
-        else:
-            print("\ncommande introuvable\n")
-            return False
-        
-    def teleportation(game, list_of_words, number_of_parameter):
-        actual_room = game.player.current_room
-        history = game.player.charge
-        if history == []:
-            print("\nvous n'avez chargé.\n")
-            return False
-        
-        print("\nLieux chargés dans le teleporter\n") 
-        for element, charged_room in enumerate(game.player.charge):
-            print(element, ":", charged_room.name)
-
-        words = input(">")
-        if words!=int:
-            print('\ncommande indisponible.\n')
-            return False
-        
-        num = int(words)
-
-        if 0 <= num <= len(game.player.charge):
-            game.player.current_room = game.player.charge[num]
-            print(game.player.charge[num].get_long_description())
-            return True
-        else:
-            print("\ncommande introuvable\n.")
-            return False
-   
             
+           
+      
+
             
     
         
