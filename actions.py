@@ -48,6 +48,7 @@ class Actions:
 
         """
         
+
         player = game.player
         l = len(list_of_words)
         # If the number of parameters is incorrect, print an error message and return False.
@@ -153,15 +154,18 @@ class Actions:
             print(MSG1.format(command_word=command_word))
             return False
         player = game.player
-        historic = player.history
-        if len(historic)==0:
+        if len(player.history)==0:
             print("\nvous ne pouvez plus revenir en arrière ou alors vous n'avez rien visité.\n")
             return False
         else:
-            room = historic.pop()
-            print(room.get_long_description())
-            player.current_room = room
-            player.get_history()
+            try:
+                player.history.pop()
+                print(player.history[-1].get_long_description())
+                player.current_room = player.history[-1]
+                player.get_history()
+            except IndexError :
+                print("\nvous êtes revenu au hall.\n")
+                return False
 
     def look(game, list_of_words, number_of_parameter):
         player = game.player
@@ -263,31 +267,41 @@ class Actions:
         a = input(">")
 
         if a =='A':
-            player.charge.append(game.player.current_room)
+            set_= set(player.charge)
+            set_.add(game.player.current_room)
+            player.charge = list(set_)
             print(3*"...\n",f"vous avez chargé {game.player.current_room.name}.")
             return True
         else:
-            print("commande introuvable")
+            print("\ncommande introuvable\n")
             return False
         
     def teleportation(game, list_of_words, number_of_parameter):
         actual_room = game.player.current_room
-        history = game.player.history
+        history = game.player.charge
         if history == []:
-            print("vous n'avez rien visité.")
+            print("\nvous n'avez chargé.\n")
             return False
-        if 
+        
+        print("\nLieux chargés dans le teleporter\n") 
         for element, charged_room in enumerate(game.player.charge):
             print(element, ":", charged_room.name)
+
+        words = input(">")
+        if words!=int:
+            print('\ncommande indisponible.\n')
+            return False
         
-        if 0 <= list_of_words[0] <= len(game.player.charge):
-            game.player.current_room = game.player.charge
+        num = int(words)
+
+        if 0 <= num <= len(game.player.charge):
+            game.player.current_room = game.player.charge[num]
+            print(game.player.charge[num].get_long_description())
             return True
         else:
-            print("commande introuvable.")
+            print("\ncommande introuvable\n.")
             return False
-            
-      
+   
             
             
     

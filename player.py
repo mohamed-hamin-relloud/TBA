@@ -18,9 +18,9 @@ class Player():
 
             
     def get_history(self):
-        set_history = set(self.history)
         print("vous avez visité les lieux suivant :\n")
-        for i in set_history:
+        
+        for i in self.history[:len(self.history)-1]:
             if i == None:
                 continue
             else :

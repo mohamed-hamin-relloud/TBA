@@ -49,6 +49,7 @@ class Game:
         self.commands["take"] = take
         self.commands["drop"] = drop 
         self.commands['check'] = check
+        self.commands['teleport'] = teleport
         
         
         
@@ -119,7 +120,6 @@ class Game:
         # If the command is not recognized, print an error message
         if command_word=="":
             print(f"\n ")
-        elif command_word not in 
         elif command_word not in self.commands.keys():
             print(f"\nCommande '{command_word}' non reconnue. Entrez 'help' pour voir la liste des commandes disponibles.\n")
         # If the command is recognized, execute it
