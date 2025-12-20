@@ -53,7 +53,9 @@ class Game:
         
         
         
+        #Create character
 
+        chief_cook = Character("Chief cook", "un homme avec une toque", kitchen, ['à vos fourneaux !'])
         #Create Item
 
         sword = Item("sword", "épée lourde ressemblant à celle des rois d'antan...",20)
