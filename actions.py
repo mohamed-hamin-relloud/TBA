@@ -170,14 +170,17 @@ class Actions:
     def look(game, list_of_words, number_of_parameter):
         player = game.player
         actual_room = game.player.current_room
-        if actual_room.inventory == {}:
-            print("\nvous ne voyez pas d'objet particulier dans cette pièce.\n")
+        pnj_room = game.player.character.current_room
+        if actual_room.inventory == {} :
+            print("\nvous ne voyez rien de particulier dans cette pièce.\n")
             return False
         else:
-            print("\nles objets que vous voyez sont :")
+            print("\nvous voyez :")
             for i in actual_room.inventory:
                 print(f"\t - {actual_room.inventory.get(i).name} : {actual_room.inventory.get(i).description}")
-            print("")
+            for i in pnj_room:
+                print(f"\t - {pnj_room.inventory.get(i).name} : {pnj_room.inventory.get(i).description}")
+
             return True
     
     def take(game, list_of_words, number_of_parameter):
