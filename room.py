@@ -3,7 +3,7 @@
 class Room:
 
     # Define the constructor. 
-    def __init__(self, name, description, inventory = None, characters = None):
+    def __init__(self, name, description, inventory = None):
         self.name = name
         self.description = description
         self.exits = {}
@@ -11,10 +11,7 @@ class Room:
             self.inventory = {}
         else:
             self.inventory = inventory
-        if not characters:
-            self.characters = {}
-        else:
-            self.characters = characters
+        self.characters = {}
         
 
         
@@ -22,21 +19,15 @@ class Room:
     # Define the inventory of the current room
     def get_inventory(self):
         dict_inventory= self.inventory
-        dict_character = self.characters
-        if dict_inventory == {} and dict_character == {}:
+        if dict_inventory == {}:
             return "il n'y a rien ici"
-        print("la pièce contient :\n")
+        print("\nOn voit :")
         for i in dict_inventory:
-            if i == None:
-                continue
-            else :
-                print(f"\t {dict_inventory.get(i).description}")
-        for i in dict_character:
-            if i == None:
-                continue
-            else:
-                print(f"\t {dict_character.get(i).description}")
-        return ""
+            print(f"\t {dict_inventory.get(i).name} : {dict_inventory.get(i).description} ({dict_inventory.get(i).weight} kg)")
+        for i in self.characters:
+            print(f"\t {self.characters.get(i).name} : {self.characters.get(i).description}")
+        print("")        
+        return True
 
         
     

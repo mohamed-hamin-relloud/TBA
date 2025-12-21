@@ -1,3 +1,5 @@
+import random
+
 class Character:
 
     def __init__(self, name, description, current_room, msgs):
@@ -9,4 +11,5 @@ class Character:
     def __str__(self):
         return f"{self.name} : {self.description}."
     
+  
     

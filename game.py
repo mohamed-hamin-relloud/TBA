@@ -17,6 +17,8 @@ class Game:
         self.rooms = []
         self.commands = {}
         self.player = None
+        self.character = None
+    
 
     
     # Setup the game
@@ -79,7 +81,10 @@ class Game:
 
         #Create character
 
-        chief_cook = Character("Chief cook", "un homme avec une toque", kitchen, ['à vos fourneaux !'])
+        chief = Character("Chief cook", "un homme avec une toque", kitchen, ['à vos fourneaux !'])
+        kitchen.characters[chief.name] = chief
+        
+        
 
         # Create exits for rooms
 
