@@ -102,6 +102,11 @@ class Game:
         self.player = Player(input("\nEntrez votre nom: "))
         self.player.current_room = hall
         
+    def pnj_move(self):
+        for salle in list(self.rooms):
+            for pnj in list(salle.characters):
+                salle.characters.get(pnj).move()
+
 
     # Play the game
     def play(self):
@@ -111,6 +116,7 @@ class Game:
         while not self.finished:
             # Get the command from the player
             self.process_command(input(">"))
+            self.pnj_move()
 
         return None
 
