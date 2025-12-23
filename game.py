@@ -9,6 +9,8 @@ from actions import Actions
 from item import Item
 from character import Character
 
+DEBUG = True
+
 class Game:
 
     # Constructor
@@ -18,6 +20,7 @@ class Game:
         self.commands = {}
         self.player = None
         self.character = None
+        
     
 
     
@@ -38,7 +41,7 @@ class Game:
         take = Command("take", "prendre les objets selectionnés", Actions.take, 1)
         drop = Command('drop', 'déposer les objets de votre inventaire', Actions.drop, 1)
         check = Command("check", "voir les objets dans la pièce", Actions.check, 0)
-
+        talk = Command('talk', 'parler avec les PNJ', Actions.talk, 1)
         
 
         directions = set(Directions)
@@ -52,6 +55,7 @@ class Game:
         self.commands["take"] = take
         self.commands["drop"] = drop 
         self.commands['check'] = check
+        self.commands["talk"] = talk
         
         #Create Item
 
@@ -64,13 +68,13 @@ class Game:
 
         hall = Room("Hall", "dans une grande salle de receptions reliant beaucoup de piece entre elles.")
         self.rooms.append(hall)
-        diningroom = Room("Diningroom", "dans une immense salle avec une grande table rectangulaire et des dizaines de chaises anciennes.", {"sword": sword})
+        diningroom = Room("Diningroom", "dans une immense salle avec une grande table rectangulaire et des dizaines de chaises anciennes.")
         self.rooms.append(diningroom)
         cave = Room("Cave", "dans une cave où il fait très sombre et où l'atmosphère pensant, une menace à l'air de planer autour de nous.")
         self.rooms.append(cave)
         kitchen = Room("Kitchen", "dans une cuisine où l'odeur des plats est reconfortant, on peut y voir des ustensiles en fonte et en bronze.", {"grimoire": grimoire, "orbe-de-vie" : orbe_de_vie} )
         self.rooms.append(kitchen)
-        coldroom = Room("Coldroom", "dans une chambre froide où la nourriture est stockée, l'endroit est assez préoccupant.")
+        coldroom = Room("Coldroom", "dans une chambre froide où la nourriture est stockée, l'endroit est assez préoccupant.", {"sword": sword})
         self.rooms.append(coldroom)
         livingroom = Room("Livingroom", "dans une grande salle avec des canapé, une cheminée et un endroit pour grignotter avec des meubles rustiques.")
         self.rooms.append(livingroom)
@@ -81,7 +85,7 @@ class Game:
 
         #Create character
 
-        chief = Character("Chief cook", "un homme avec une toque", kitchen, ['à vos fourneaux !'])
+        chief = Character("Chief-cook", "un homme avec une toque", coldroom, ['bonjour cher convive',"à vos fourneaux !", "donnez la poule !"])
         kitchen.characters[chief.name] = chief
         
         
@@ -102,6 +106,17 @@ class Game:
         self.player = Player(input("\nEntrez votre nom: "))
         self.player.current_room = hall
         
+    def pnj_move(self):
+        for salle in list(self.rooms):
+            for pnj in list(salle.characters):
+                salle.characters.get(pnj).move()
+
+
+
+
+        
+        
+
 
     # Play the game
     def play(self):
@@ -111,6 +126,7 @@ class Game:
         while not self.finished:
             # Get the command from the player
             self.process_command(input(">"))
+            self.pnj_move()
 
         return None
 

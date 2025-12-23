@@ -10,7 +10,7 @@ class Player():
         if not history:
             self.history = []
         else:
-            self.history = history
+            self.history = [d for d in self.history if d is not None]
        
 
             
@@ -45,12 +45,17 @@ class Player():
             return None
         direction = direction[0].upper()
         next_room = self.current_room.exits[direction]
-        self.history.append(next_room)
 
         # If the next room is None, print an error message and return False.
         if next_room is None:
             print("\nAucune porte dans cette direction !\n")
             return False
+        else:
+            self.history.append(next_room)
+        
+
+        
+            
         
         # Set the current room to the next room.
         self.current_room = next_room

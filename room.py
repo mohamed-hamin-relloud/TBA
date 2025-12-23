@@ -1,5 +1,7 @@
 # Define the Room class.
 
+from copy import deepcopy
+
 class Room:
 
     # Define the constructor. 
@@ -24,9 +26,12 @@ class Room:
         print("\nOn voit :")
         for i in dict_inventory:
             print(f"\t {dict_inventory.get(i).name} : {dict_inventory.get(i).description} ({dict_inventory.get(i).weight} kg)")
-        for i in self.characters:
-            print(f"\t {self.characters.get(i).name} : {self.characters.get(i).description}")
-        print("")        
+        if self.characters == {}:
+            return False
+        else:
+            for i in self.characters:
+                print(f"\t {self.characters.get(i).name} : {self.characters.get(i).description}")
+        print("")  
         return True
 
         

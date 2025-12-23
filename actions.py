@@ -154,19 +154,27 @@ class Actions:
             print(MSG1.format(command_word=command_word))
             return False
         player = game.player
-        if len(player.history)==0:
+        if len(player.history) == 0:
             print("\nvous ne pouvez plus revenir en arrière ou alors vous n'avez rien visité.\n")
             return False
         else:
-            try:
-                player.history.pop()
-                print(player.history[-1].get_long_description())
-                player.current_room = player.history[-1]
-                player.get_history()
-            except IndexError :
+            player.history.pop()
+            if not player.history:
                 print("\nvous êtes revenu au hall.\n")
                 return False
-
+            last = None
+            for r in reversed(player.history):
+                if r is not None:
+                    last = r
+                    break
+            if last is None:
+                print("\nErreur: aucune salle valide dans l'historique.\n")
+                return False
+            player.current_room = last
+            print(last.get_long_description())
+            player.get_history()
+            return True
+    
     def look(game, list_of_words, number_of_parameter):
         player = game.player
         actual_room = game.player.current_room
@@ -233,14 +241,23 @@ class Actions:
         game.player.current_room.inventory = actual_room_copy
         game.player.inventory = stuff
     
-    def drop(game, list_of_words, number_of_paramater):
+    def drop(game, list_of_words, number_of_parameter):
         actual_room_object = game.player.current_room.inventory
         stuff = game.player.inventory
+        if len(list_of_words) != number_of_parameter + 1:
+            command_word = list_of_words[0]
+            print(MSG1.format(command_word=command_word))
+            return False
+        
         if stuff == {}:
             print("\nvous n'avez aucun objet.\n")
             return False
         
         items = list_of_words[1]
+
+        if items == "":
+            print("\ncommande indisponible.\n")
+            return False
         
         if items not in stuff:
             print("\nvous n'avez pas cette objet.\n")
@@ -265,7 +282,32 @@ class Actions:
                 print(f"\t - {bag.get(i).name} : {bag.get(i).description}")
             return True
             
-           
+    def talk(game, list_of_words, number_of_parameter):
+        player = game.player
+        l = len(list_of_words)
+       
+        if l != number_of_parameter + 1:
+            command_word = list_of_words[0]
+            print(MSG1.format(command_word=command_word))
+            return False
+        
+        perso_talking = list_of_words[1]
+        
+        if perso_talking == "":
+            print("\nCommande indisponible.\n")
+            return False
+
+        if perso_talking not in player.current_room.characters:
+            print(f"\n{perso_talking} n'est pas ici.\n")
+            return False
+
+        player.current_room.characters[perso_talking].get_msg()
+        return True
+        
+        
+        
+
+
       
 
             
