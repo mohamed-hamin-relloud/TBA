@@ -58,7 +58,7 @@ class Game:
 
         self.rooms = [hall, diningroom, cave, kitchen, coldroom, livingroom, library, stairs]
         torch = Item("torch", "une torche en bois qui éclaire faiblement", 1.5)
-        chandelier = Item("chandelier", "un chandelier en argent avec des bougies", 3.0)
+        chandelier = Item("chandelier", "il n'y a rien ici",0.0)
         ancient_book = Item("ancient_book", "il y a plein d'anciens livres déposés sur des étagères", 10.0)
         silver_knife = Item("silver_knife", "un couteau en argent finement ouvragé", 0.3)
         rusty_key = Item("rusty_key", "une clé rouillée qui semble ancienne", 0.1)
