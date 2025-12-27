@@ -161,13 +161,17 @@ class Actions:
             player.current_room = room
             player.get_history()
             
-                   
 
-                    
-
-        
-
-
-
-        
+    def look(game, list_of_words, number_of_parameters):
+        """
+        Display the current room's description and inventory.
+        """
+        if len(list_of_words) != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG0.format(command_word=command_word))
+            return False
+        player = game.player
+        print(player.current_room.get_long_description())
+        print(player.current_room.get_inventory())
+        return True
 

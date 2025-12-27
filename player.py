@@ -5,6 +5,7 @@ class Player():
     def __init__(self, name, history = None):
         self.name = name
         self.current_room = None
+        self.inventory = []
         if not history:
             self.history = []
         else:
@@ -46,5 +47,19 @@ class Player():
         print(self.current_room.get_long_description())
         print(self.get_history())
         return True
-
     
+    def get_inventory(self):
+        if not self.inventory:
+            return "Votre inventaire est vide."
+        for item in self.inventory:
+            items_str = "\n".join(f"    - {item}")
+            return f"Vous disposez des items suivants :\n{items_str}"
+
+class Item:
+    def __init__(self,name:str,description:str,weight:float):
+        self.name=name
+        self.description=description
+        self.weight=weight
+         
+    def __str__(self):
+         return f"{self.name} : {self.description} ({self.weight} kg)"

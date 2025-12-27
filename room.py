@@ -1,5 +1,7 @@
 # Define the Room class.
 
+from player import Item
+
 class Room:
 
     # Define the constructor. 
@@ -7,6 +9,7 @@ class Room:
         self.name = name
         self.description = description
         self.exits = {}
+        self.inventory = []
 
     # Define the inventory of the current room
 
@@ -31,4 +34,14 @@ class Room:
     # Return a long description of this room including exits.
     def get_long_description(self):
         return f"\nVous êtes {self.description}\n\n{self.get_exit_string()}\n"
- 
+    
+    def get_inventory(self):
+        if not self.inventory:
+            return "Il n'y a rien ici."
+        items_str = "\n".join(f"    - {item}" for item in self.inventory)
+        return f"La pièce contient :\n{items_str}"
+    
+    def add_item(self, item: Item):
+        self.inventory.append(item)
+
+

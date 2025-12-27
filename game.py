@@ -3,7 +3,7 @@
 # Import modules
 
 from room import Room
-from player import Player
+from player import Player, Item
 from command import Command
 from actions import Actions
 
@@ -24,6 +24,7 @@ class Game:
 
         help = Command("help", " : afficher cette aide", Actions.help, 0)
         quit = Command("quit", " : quitter le jeu", Actions.quit, 0)
+        look = Command("look", " : regarder autour de vous", Actions.look, 0)
 
         direction_description = "(N, S, E, O, U, D)" + str(Directions)
         go = Command("go", " <direction> : se déplacer dans une direction cardinale "+direction_description, Actions.go, 1)
@@ -35,6 +36,7 @@ class Game:
         self.commands["help"] = help
         self.commands["quit"] = quit
         self.commands["back"] = back
+        self.commands["look"] = look
        
 
         hall = Room("Hall", "dans une grande salle de receptions reliant beaucoup de piece entre elles.")
@@ -53,6 +55,42 @@ class Game:
         self.rooms.append(library)
         stairs = Room("Stairs", "un grand esclalier reliant l'étage au hall d'entrée fait de marbre et de bois ancien.")
         self.rooms.append(stairs)
+
+        self.rooms = [hall, diningroom, cave, kitchen, coldroom, livingroom, library, stairs]
+        torch = Item("torch", "une torche en bois qui éclaire faiblement", 1.5)
+        chandelier = Item("chandelier", "un chandelier en argent avec des bougies", 3.0)
+        ancient_book = Item("ancient_book", "un livre ancien aux pages jaunies et couvert de poussière", 0.8)
+        silver_knife = Item("silver_knife", "un couteau en argent finement ouvragé", 0.3)
+        rusty_key = Item("rusty_key", "une clé rouillée qui semble ancienne", 0.1)
+        wooden_chest = Item("wooden_chest", "un coffre en bois verrouillé", 10.0)
+        wine_bottle = Item("wine_bottle", "une bouteille de vin scellée, étiquetée d'une année lointaine", 1.2)
+        old_map = Item("old_map", "une carte dessiné à la main, montrant des lieux inconnus", 0.2)
+        candle = Item("candle", "une bougie à moitié consumée", 0.1)
+        frying_pan = Item("frying_pan", "une poêle en fonte lourde et bien usée", 2.5)
+        frozen_meat = Item("frozen_meat", "un morceau de viande gelée, encore comestible", 1.8)
+        painting = Item("painting", "un tableau représentant un paysage mystérieux", 1.0)
+        fireplace_poker = Item("fireplace_poker", "un tisonnier en métal pour la cheminée", 1.5)
+
+        hall.add_item(chandelier)
+        hall.add_item(old_map)
+
+        diningroom.add_item(silver_knife)
+        diningroom.add_item(wine_bottle)
+
+        cave.add_item(torch)
+        cave.add_item(rusty_key)
+        cave.add_item(wooden_chest)
+
+        kitchen.add_item(frying_pan)
+        kitchen.add_item(candle)
+
+        coldroom.add_item(frozen_meat)
+
+        livingroom.add_item(fireplace_poker)
+        livingroom.add_item(painting)
+
+        library.add_item(ancient_book)
+
 
         # Create exits for rooms
 
@@ -108,6 +146,15 @@ class Game:
         print("Entrez 'help' si vous avez besoin d'aide.")
         #
         print(self.player.current_room.get_long_description())
+    
+    def look(self):
+        """Affiche les détails de la pièce actuelle."""
+        if self.current_room:
+            self.current_room.look()
+        else:
+            print("Vous n'êtes nulle part.")#Cela signifie que le joueur n'a pas encore été placé dans une pièce de la map.
+
+
     
 
 def main():
