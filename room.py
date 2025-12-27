@@ -52,5 +52,13 @@ class Room:
                 return True
         return False
 
+    def drop(self, item_name, player):
+        """Permet de déposer un objet de l'inventaire du joueur dans la pièce."""
+        for item in player.inventory:
+            if item.name.lower() == item_name.lower():
+                player.inventory.remove(item)
+                self.inventory.append(item)
+                return True
+        return False
 
 

@@ -211,3 +211,21 @@ class Actions:
         else:
             print(f"\nIl n'y a pas d'item nommé {item_name} ici.\n")
             return False
+        
+    def drop(game, list_of_words, number_of_parameters):
+        """
+        Drop an item from the player's inventory into the current room.
+        """
+        if len(list_of_words) != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG1.format(command_word=command_word))
+            return False
+        player = game.player
+        item_name = list_of_words[1]
+        current_room = player.current_room
+        if current_room.drop(item_name, player):
+            print(f"\nVous avez déposé {item_name}.\n")
+            return True
+        else:
+            print(f"\nVous n'avez pas d'item nommé {item_name} dans votre inventaire.\n")
+            return False
