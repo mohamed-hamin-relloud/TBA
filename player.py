@@ -1,4 +1,6 @@
 # Define the Player class.
+from item import Item
+
 class Player():
 
     # Define the constructor.
@@ -53,12 +55,3 @@ class Player():
             return "Votre inventaire est vide."
         items_str = "\n".join(f"    - {item}" for item in self.inventory)
         return f"Vous disposez des items suivants :\n{items_str}"
-
-class Item:
-    def __init__(self,name:str,description:str,weight:float):
-        self.name=name
-        self.description=description
-        self.weight=weight
-         
-    def __str__(self):
-         return f"{self.name} : {self.description} ({self.weight} kg)"

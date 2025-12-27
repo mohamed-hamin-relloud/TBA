@@ -3,7 +3,8 @@
 # Import modules
 
 from room import Room
-from player import Player, Item
+from player import Player
+from item import Item
 from command import Command
 from actions import Actions
 

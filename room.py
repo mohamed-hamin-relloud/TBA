@@ -1,6 +1,6 @@
 # Define the Room class.
 
-from player import Item
+from item import Item
 
 class Room:
 
