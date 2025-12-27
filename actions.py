@@ -240,4 +240,7 @@ class Actions:
             return False
         player = game.player
         print(player.get_inventory())
-        return True    
+        return True
+        
+    
+
