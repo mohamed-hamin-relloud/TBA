@@ -175,3 +175,39 @@ class Actions:
         print(player.current_room.get_inventory())
         return True
 
+    def take(game, list_of_words, number_of_parameters):
+        """
+        Take an item from the current room.
+        """
+        l = len(list_of_words)
+        if l != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG1.format(command_word=command_word))
+            return False
+        
+        player = game.player
+        item_name = list_of_words[1]
+        if player.current_room.take(item_name, player):
+            print(f"Vous avez pris {item_name}.")
+            return True
+        else:
+            print(f"Il n'y a pas d'objet nommé '{item_name}' ici.")
+            return False
+    
+    def take(game, list_of_words, number_of_parameters):
+        """
+        Take an item from the current room and add it to the player's inventory.
+        """
+        if len(list_of_words) != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG1.format(command_word=command_word))
+            return False
+        player = game.player
+        item_name = list_of_words[1]
+        current_room = player.current_room
+        if current_room.take(item_name, player):
+            print(f"\nVous avez pris {item_name}.\n")
+            return True
+        else:
+            print(f"\nIl n'y a pas d'item nommé {item_name} ici.\n")
+            return False

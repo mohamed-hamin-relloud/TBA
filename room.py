@@ -44,4 +44,13 @@ class Room:
     def add_item(self, item: Item):
         self.inventory.append(item)
 
+    def take(self, item_name, player):
+        for item in self.inventory:
+            if item.name.lower() == item_name.lower():
+                self.inventory.remove(item)
+                player.inventory.append(item)
+                return True
+        return False
+
+
 

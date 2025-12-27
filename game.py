@@ -25,6 +25,7 @@ class Game:
         help = Command("help", " : afficher cette aide", Actions.help, 0)
         quit = Command("quit", " : quitter le jeu", Actions.quit, 0)
         look = Command("look", " : regarder autour de vous", Actions.look, 0)
+        take = Command("take", " <item> : prendre un objet", Actions.take, 1)
 
         direction_description = "(N, S, E, O, U, D)" + str(Directions)
         go = Command("go", " <direction> : se déplacer dans une direction cardinale "+direction_description, Actions.go, 1)
@@ -37,6 +38,7 @@ class Game:
         self.commands["quit"] = quit
         self.commands["back"] = back
         self.commands["look"] = look
+        self.commands["take"] = take
        
 
         hall = Room("Hall", "dans une grande salle de receptions reliant beaucoup de piece entre elles.")
