@@ -27,6 +27,8 @@ class Game:
         look = Command("look", " : regarder autour de vous", Actions.look, 0)
         take = Command("take", " <item> : prendre un objet", Actions.take, 1)
         drop = Command("drop", " <item> : déposer un objet", Actions.drop, 1)
+        check= Command("check", " : vérifier l'inventaire", Actions.check, 0)
+
 
         direction_description = "(N, S, E, O, U, D)" + str(Directions)
         go = Command("go", " <direction> : se déplacer dans une direction cardinale "+direction_description, Actions.go, 1)
@@ -41,6 +43,7 @@ class Game:
         self.commands["look"] = look
         self.commands["take"] = take
         self.commands["drop"] = drop
+        self.commands["check"] = check
        
 
         hall = Room("Hall", "dans une grande salle de receptions reliant beaucoup de piece entre elles.")

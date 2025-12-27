@@ -60,5 +60,10 @@ class Room:
                 self.inventory.append(item)
                 return True
         return False
-
+    
+    def check_item(self, item_name):
+        for item in self.inventory:
+            if item.name.lower() == item_name.lower():
+                return True
+        return False
 

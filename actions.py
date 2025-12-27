@@ -229,3 +229,15 @@ class Actions:
         else:
             print(f"\nVous n'avez pas d'item nommé {item_name} dans votre inventaire.\n")
             return False
+        
+    def check(game, list_of_words, number_of_parameters):
+        """
+        Check the player's inventory.
+        """
+        if len(list_of_words) != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG0.format(command_word=command_word))
+            return False
+        player = game.player
+        print(player.get_inventory())
+        return True    

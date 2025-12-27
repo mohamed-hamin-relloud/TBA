@@ -51,9 +51,8 @@ class Player():
     def get_inventory(self):
         if not self.inventory:
             return "Votre inventaire est vide."
-        for item in self.inventory:
-            items_str = "\n".join(f"    - {item}")
-            return f"Vous disposez des items suivants :\n{items_str}"
+        items_str = "\n".join(f"    - {item}" for item in self.inventory)
+        return f"Vous disposez des items suivants :\n{items_str}"
 
 class Item:
     def __init__(self,name:str,description:str,weight:float):
