@@ -176,46 +176,46 @@ class Actions:
         return True
 
     def take(game, list_of_words, number_of_parameters):
-        """
-        Take an item from the current room.
-        """
-        l = len(list_of_words)
-        if l != number_of_parameters + 1:
-            command_word = list_of_words[0]
-            print(MSG1.format(command_word=command_word))
-            return False
-        
-        player = game.player
-        item_name = list_of_words[1]
-        if player.current_room.take(item_name, player):
-            print(f"Vous avez pris {item_name}.")
-            return True
-        else:
-            print(f"Il n'y a pas d'objet nommé '{item_name}' ici.")
-            return False
-    
-    def take(game, list_of_words, number_of_parameters):
-        """
-        Take an item from the current room and add it to the player's inventory.
+        """Take an item from the current room and add it to the player's inventory,
+        respecting the player's max_weight limit.
         """
         if len(list_of_words) != number_of_parameters + 1:
             command_word = list_of_words[0]
             print(MSG1.format(command_word=command_word))
             return False
+
         player = game.player
         item_name = list_of_words[1]
         current_room = player.current_room
+
+        # Find the item in the current room
+        item = None
+        for it in current_room.inventory:
+            if it.name.lower() == item_name.lower():
+                item = it
+                break
+
+        if item is None:
+            print(f"\nIl n'y a pas d'item nommé '{item_name}' ici.\n")
+            return False
+
+        # Check weight limit
+        if player.current_weight + item.weight > player.max_weight:
+            print(f"\nVous ne pouvez pas prendre '{item_name}' : capacité maximale ({player.max_weight} kg) dépassée.\n")
+            return False
+
+        # Transfer item and update weight
         if current_room.take(item_name, player):
-            print(f"\nVous avez pris {item_name}.\n")
+            player.current_weight += item.weight
+            print(f"\nVous avez pris {item_name} ({item.weight} kg). Poids actuel: {player.current_weight}/{player.max_weight} kg.\n")
             return True
         else:
-            print(f"\nIl n'y a pas d'item nommé {item_name} ici.\n")
+            print(f"\nÉchec lors de la prise de l'item '{item_name}'.\n")
             return False
         
     def drop(game, list_of_words, number_of_parameters):
-        """
-        Drop an item from the player's inventory into the current room.
-        """
+        """Drop an item from the player's inventory into the current room and
+        update the player's carried weight."""
         if len(list_of_words) != number_of_parameters + 1:
             command_word = list_of_words[0]
             print(MSG1.format(command_word=command_word))
@@ -223,11 +223,24 @@ class Actions:
         player = game.player
         item_name = list_of_words[1]
         current_room = player.current_room
+
+        # Find the item in the player's inventory to get its weight
+        item = None
+        for it in player.inventory:
+            if it.name.lower() == item_name.lower():
+                item = it
+                break
+
+        if item is None:
+            print(f"\nVous n'avez pas d'item nommé {item_name} dans votre inventaire.\n")
+            return False
+
         if current_room.drop(item_name, player):
-            print(f"\nVous avez déposé {item_name}.\n")
+            player.current_weight = max(0, player.current_weight - item.weight)
+            print(f"\nVous avez déposé {item_name}. Poids actuel: {player.current_weight}/{player.max_weight} kg.\n")
             return True
         else:
-            print(f"\nVous n'avez pas d'item nommé {item_name} dans votre inventaire.\n")
+            print(f"\nÉchec lors du dépôt de l'item '{item_name}'.\n")
             return False
         
     def check(game, list_of_words, number_of_parameters):

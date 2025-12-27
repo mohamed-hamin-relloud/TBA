@@ -4,11 +4,21 @@ from item import Item
 class Player():
 
     # Define the constructor.
-    def __init__(self, name, history = None):
+    def __init__(self, name, current_room=None, history=None, max_weight=5.0):
+        """Initialise le joueur.
+
+        Args:
+            name (str): nom du joueur
+            current_room (Room|None): salle de départ
+            history (list|None): historique des pièces visitées
+            max_weight (float): capacité de portage maximale en kg
+        """
         self.name = name
-        self.current_room = None
+        self.current_room = current_room
         self.inventory = []
-        if not history:
+        self.max_weight = max_weight
+        self.current_weight = 0
+        if history is None:
             self.history = []
         else:
             self.history = history
@@ -52,6 +62,8 @@ class Player():
     
     def get_inventory(self):
         if not self.inventory:
-            return "Votre inventaire est vide."
+            return f"Votre inventaire est vide. Poids actuel: {self.current_weight}/{self.max_weight} kg."
         items_str = "\n".join(f"    - {item}" for item in self.inventory)
-        return f"Vous disposez des items suivants :\n{items_str}"
+        return f"Vous disposez des items suivants :\n{items_str}\nPoids actuel: {self.current_weight}/{self.max_weight} kg." 
+    
+

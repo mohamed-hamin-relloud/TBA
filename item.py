@@ -17,8 +17,12 @@ class Item:
         self.description = description
         self.weight = weight
 
-    def __str__(self) -> str:
+    def __str__(self):
         return f"{self.name} : {self.description} ({self.weight} kg)"
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         return f"Item({self.name!r}, {self.description!r}, {self.weight!r})"
+    
+    def get_weight(self):
+        """Retourne le poids de l'objet."""
+        return self.weight
