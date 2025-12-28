@@ -24,11 +24,12 @@ from item import Item
 class Room:
 
     # Define the constructor. 
-    def __init__(self, name, description):
+    def __init__(self, name, description, items=None, dark=False):
         self.name = name
         self.description = description
         self.exits = {}
-        self.inventory = []
+        self.inventory = items if items else []
+        self.dark = dark  # Pièce sombre ou éclairée
 
     # Define the inventory of the current room
 

@@ -70,3 +70,16 @@ class Key(Item):
             return f"La porte {door.id} a été déverrouillée."
         else:
             return f"Cette clé ne correspond pas à la porte {getattr(door, 'id', '<inconnue>')}."
+        
+class Torch(Item):
+    def __init__(self):
+        super().__init__("torche", 1)  # Nom et poids
+
+    def use(self, room):
+        """Éclaire une pièce sombre."""
+        if room.dark:
+            room.dark = False
+            return "La pièce est maintenant éclairée grâce à la torche."
+        else:
+            return "Cette pièce est déjà éclairée."
+

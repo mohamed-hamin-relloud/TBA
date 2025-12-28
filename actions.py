@@ -342,3 +342,10 @@ class Actions:
                 return True
         print("\nVous ne possédez pas de beamer à charger.\n")
         return False
+
+    def use_torch(self, item_name):
+        for item in self.player.inventory:
+            if isinstance(item, Torch) and item.name.lower() == item_name.lower():
+                return True, item.use(self.player.current_room)
+        return False, "Vous ne possédez pas de torche."
+

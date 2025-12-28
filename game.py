@@ -116,7 +116,7 @@ class Game:
         hall.exits = { "N" : None, "E" : livingroom, "S" : None, "O" : diningroom , "U" : None, "D" : None}
         diningroom.exits = {"N" : kitchen, "E" : hall,  "S" : None,"O" : None, "U" : None, "D" : None}
         livingroom.exits = { "N" : None, "E" : None,  "S" : None, "O" : hall, "U" : None, "D" : None}
-        cave.exits = { "N" : None , "E" : None,  "S" : None, "O" : coldroom,"U" : None, "D" : None}
+        cave.exits = { "N" : None , "E" : None,  "S" : None, "O" : None,"U" : None, "D" : None}
         kitchen.exits = { "N" : coldroom , "E" : None, "S" : diningroom, "O" : None, "U" : None, "D" : None}
         coldroom.exits = { "N" : None,  "S" : kitchen, "O" : None, "U" : None, "D" : None}
         library.exits = { "N" : None , "E" : None,  "S" : None,  "O" : hall, "U" : None, "D" : None}
