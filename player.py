@@ -1,5 +1,5 @@
 # Define the Player class.
-from item import Item
+from item import Item, Beamer
 
 class Player():
 
@@ -66,4 +66,8 @@ class Player():
         items_str = "\n".join(f"    - {item}" for item in self.inventory)
         return f"Vous disposez des items suivants :\n{items_str}\nPoids actuel: {self.current_weight}/{self.max_weight} kg." 
     
-
+    def use_beamer(self):
+        for item in self.inventory:
+            if isinstance(item, Beamer):
+                return item.use(self)
+        return "Vous ne possédez pas de beamer."

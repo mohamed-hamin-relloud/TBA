@@ -4,7 +4,7 @@
 
 from room import Room
 from player import Player
-from item import Item
+from item import Item, Beamer
 from command import Command
 from actions import Actions
 
@@ -29,7 +29,8 @@ class Game:
         take = Command("take", " <item> : prendre un objet", Actions.take, 1)
         drop = Command("drop", " <item> : déposer un objet", Actions.drop, 1)
         check= Command("check", " : vérifier l'inventaire", Actions.check, 0)
-
+        beamer= Command("beamer", " : utiliser le beamer pour se téléporter", Actions.use_beamer, 0)
+        charge = Command("charge", " : charger le beamer dans la pièce courante", Actions.charge, 0)
 
         direction_description = "(N, S, E, O, U, D)" + str(Directions)
         go = Command("go", " <direction> : se déplacer dans une direction cardinale "+direction_description, Actions.go, 1)
@@ -45,6 +46,8 @@ class Game:
         self.commands["take"] = take
         self.commands["drop"] = drop
         self.commands["check"] = check
+        self.commands["beamer"] = beamer
+        self.commands["charge"] = charge
        
 
         hall = Room("Hall", "dans une grande salle de receptions reliant beaucoup de piece entre elles.")
@@ -78,9 +81,12 @@ class Game:
         frozen_meat = Item("frozen_meat", "un morceau de viande gelée, encore comestible", 1.8)
         painting = Item("painting", "un tableau représentant un paysage mystérieux", 1.0)
         fireplace_poker = Item("fireplace_poker", "un tisonnier en métal pour la cheminée", 1.5)
+        beamer_item = Beamer()
 
         hall.add_item(chandelier)
         hall.add_item(old_map)
+        # On ajoute le beamer visible dans le hall pour pouvoir le prendre
+        hall.add_item(beamer_item)
 
         diningroom.add_item(silver_knife)
         diningroom.add_item(wine_bottle)

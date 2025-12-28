@@ -26,3 +26,24 @@ class Item:
     def get_weight(self):
         """Retourne le poids de l'objet."""
         return self.weight
+
+
+class Beamer(Item):
+    """Un beamer : objet spécial capable de mémoriser une pièce et téléporter le joueur."""
+
+    def __init__(self):
+        super().__init__("beamer", "un appareil de téléportation (beamer)", 1.0)
+        self.charged_room = None  # Pièce mémorisée
+
+    def charge(self, room):
+        """Mémorise la pièce actuelle."""
+        self.charged_room = room
+        return f"Le beamer a été chargé avec la pièce : {room.name}."
+
+    def use(self, player):
+        """Téléporte le joueur vers la pièce mémorisée."""
+        if self.charged_room:
+            player.current_room = self.charged_room
+            return f"Vous avez été téléporté dans la pièce : {self.charged_room.name}."
+        else:
+            return "Le beamer n'a pas été chargé. Utilisez 'charge' pour mémoriser une pièce."

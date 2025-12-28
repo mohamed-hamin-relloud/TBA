@@ -256,4 +256,31 @@ class Actions:
         return True
         
     
+    def use_beamer(game, list_of_words, number_of_parameters):
+        """
+        Use the beamer to teleport the player to the charged room.
+        """
+        if len(list_of_words) != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG0.format(command_word=command_word))
+            return False
+        player = game.player
+        msg = player.use_beamer()
+        print(f"\n{msg}\n")
+        return True
 
+    def charge(game, list_of_words, number_of_parameters):
+        """Charge le beamer avec la pièce courante (doit être dans l'inventaire)."""
+        if len(list_of_words) != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG0.format(command_word=command_word))
+            return False
+        player = game.player
+        for item in player.inventory:
+            # On cherche un item qui sait "charge" (le Beamer)
+            if hasattr(item, "charge"):
+                msg = item.charge(player.current_room)
+                print(f"\n{msg}\n")
+                return True
+        print("\nVous ne possédez pas de beamer à charger.\n")
+        return False
