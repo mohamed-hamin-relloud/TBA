@@ -1,5 +1,6 @@
 # Define the Player class.
 from item import Item, Beamer
+from room import Door
 
 class Player():
 
@@ -46,15 +47,24 @@ class Player():
             print(f"la commande {direction} n'est pas valide ! Vous ne vous déplacez.")
             return None
         direction = direction[0].upper()
-        next_room = self.current_room.exits[direction]
-        self.history.append(next_room)
+        next_exit = self.current_room.exits.get(direction)
 
-        # If the next room is None, print an error message and return False.
-        if next_room is None:
+        # If the next exit is None, print an error message and return False.
+        if next_exit is None:
             print("\nAucune porte dans cette direction !\n")
             return False
-        
-        # Set the current room to the next room.
+
+        # If the exit is a Door, check its lock state and get the target room
+        if isinstance(next_exit, Door):
+            if next_exit.locked:
+                print("\nLa porte est verrouillée.\n")
+                return False
+            next_room = next_exit.room
+        else:
+            next_room = next_exit
+
+        # Record visit in history and move
+        self.history.append(next_room)
         self.current_room = next_room
         print(self.current_room.get_long_description())
         print(self.get_history())

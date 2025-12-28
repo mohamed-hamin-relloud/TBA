@@ -1,3 +1,22 @@
+# Define the Door helper used to represent an exit that can be locked.
+class Door:
+    """Représente une porte vers une autre salle.
+
+    Attributes:
+        room (Room): la salle vers laquelle la porte mène
+        id (str|None): identifiant optionnel de la porte (utile pour les clés)
+        locked (bool): indique si la porte est verrouillée
+    """
+    def __init__(self, room, door_id: str | None = None, locked: bool = False):
+        self.room = room
+        self.id = door_id
+        self.locked = locked
+
+    def __repr__(self):
+        state = "verrouillée" if self.locked else "ouverte"
+        return f"Door({self.room.name}, id={self.id}, {state})"
+
+
 # Define the Room class.
 
 from item import Item
@@ -25,9 +44,13 @@ class Room:
     # Return a string describing the room's exits.
     def get_exit_string(self):
         exit_string = "Sorties: " 
-        for exit in self.exits.keys():
-            if self.exits.get(exit) is not None:
-                exit_string += exit + ", "
+        for key, value in self.exits.items():
+            if value is not None:
+                # Si la sortie est une Door, indiquer si elle est verrouillée
+                if isinstance(value, Door) and value.locked:
+                    exit_string += f"{key} (verrouillée), "
+                else:
+                    exit_string += f"{key}, "
         exit_string = exit_string.strip(", ")
         return exit_string
 

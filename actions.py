@@ -13,6 +13,9 @@
 
 # The error message is stored in the MSG0 and MSG1 variables and formatted with the command_word variable, the first word in the command.
 # The MSG0 variable is used when the command does not take any parameter.
+from room import Door
+from item import Key
+
 MSG0 = "\nLa commande '{command_word}' ne prend pas de paramètre.\n"
 # The MSG1 variable is used when the command takes 1 parameter.
 MSG1 = "\nLa commande '{command_word}' prend 1 seul paramètre.\n"
@@ -256,6 +259,61 @@ class Actions:
         return True
         
     
+    def use(game, list_of_words, number_of_parameters):
+        """Use an item from the player's inventory.
+
+        - If the item is a Key, attempt to unlock an adjacent Door with the same id.
+        - Otherwise, if the item exposes a `use` method, call it.
+        """
+        if len(list_of_words) != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG1.format(command_word=command_word))
+            return False
+        player = game.player
+        item_name = list_of_words[1]
+
+        # Find the item in the player's inventory
+        item = None
+        for it in player.inventory:
+            if it.name.lower() == item_name.lower():
+                item = it
+                break
+
+        if item is None:
+            print(f"\nVous n'avez pas d'item nommé '{item_name}' dans votre inventaire.\n")
+            return False
+
+        # If it's a Key, attempt to unlock a Door adjacent to the player's current room
+        if isinstance(item, Key):
+            for exit in player.current_room.exits.values():
+                if isinstance(exit, Door) and exit.id == item.door_id:
+                    if not exit.locked:
+                        print("\nLa porte est déjà déverrouillée.\n")
+                        return False
+                    exit.locked = False
+                    # Unlock the reverse side if it exists
+                    other = exit.room
+                    for rev in other.exits.values():
+                        if isinstance(rev, Door) and rev.room == player.current_room and rev.id == item.door_id:
+                            rev.locked = False
+                    print(f"\nVous avez déverrouillé la porte {exit.id} vers {exit.room.name}.\n")
+                    return True
+            print("\nAucune porte associée à cette clé n'est accessible depuis cette pièce.\n")
+            return False
+
+        # Otherwise try to call a 'use' method on the item (beamer, etc.)
+        if hasattr(item, 'use'):
+            try:
+                msg = item.use(player)
+                print(f"\n{msg}\n")
+                return True
+            except TypeError:
+                print("\nImpossible d'utiliser cet item dans ce contexte.\n")
+                return False
+
+        print("\nCet item ne peut pas être utilisé.\n")
+        return False
+
     def use_beamer(game, list_of_words, number_of_parameters):
         """
         Use the beamer to teleport the player to the charged room.

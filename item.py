@@ -47,3 +47,26 @@ class Beamer(Item):
             return f"Vous avez été téléporté dans la pièce : {self.charged_room.name}."
         else:
             return "Le beamer n'a pas été chargé. Utilisez 'charge' pour mémoriser une pièce."
+
+
+class Key(Item):
+    """Une clé attachée à une porte identifiée par `door_id`."""
+
+    def __init__(self, door_id: str):
+        # Nom simple pour faciliter la saisie par le joueur
+        name = "key"
+        description = f"clé pour la porte {door_id}"
+        weight = 0.5
+        super().__init__(name, description, weight)
+        self.door_id = door_id  # Identifiant de la porte associée
+
+    def use(self, door):
+        """Ouvre une porte si la clé correspond.
+
+        Attendu : `door` possède les attributs `id` et `locked`.
+        """
+        if getattr(door, "id", None) == self.door_id:
+            door.locked = False
+            return f"La porte {door.id} a été déverrouillée."
+        else:
+            return f"Cette clé ne correspond pas à la porte {getattr(door, 'id', '<inconnue>')}."

@@ -2,9 +2,9 @@
 
 # Import modules
 
-from room import Room
+from room import Room, Door
 from player import Player
-from item import Item, Beamer
+from item import Item, Beamer, Key
 from command import Command
 from actions import Actions
 
@@ -31,6 +31,7 @@ class Game:
         check= Command("check", " : vérifier l'inventaire", Actions.check, 0)
         beamer= Command("beamer", " : utiliser le beamer pour se téléporter", Actions.use_beamer, 0)
         charge = Command("charge", " : charger le beamer dans la pièce courante", Actions.charge, 0)
+        use = Command("use", " <item> : utiliser un objet (ex: use key, use beamer)", Actions.use, 1)
 
         direction_description = "(N, S, E, O, U, D)" + str(Directions)
         go = Command("go", " <direction> : se déplacer dans une direction cardinale "+direction_description, Actions.go, 1)
@@ -48,6 +49,7 @@ class Game:
         self.commands["check"] = check
         self.commands["beamer"] = beamer
         self.commands["charge"] = charge
+        self.commands["use"] = use
        
 
         hall = Room("Hall", "dans une grande salle de receptions reliant beaucoup de piece entre elles.")
@@ -82,11 +84,14 @@ class Game:
         painting = Item("painting", "un tableau représentant un paysage mystérieux", 1.0)
         fireplace_poker = Item("fireplace_poker", "un tisonnier en métal pour la cheminée", 1.5)
         beamer_item = Beamer()
+        key_for_cave = Key('cave_door')
 
         hall.add_item(chandelier)
         hall.add_item(old_map)
         # On ajoute le beamer visible dans le hall pour pouvoir le prendre
         hall.add_item(beamer_item)
+        # On place la clé pour la cave dans la coldroom
+        coldroom.add_item(key_for_cave)
 
         diningroom.add_item(silver_knife)
         diningroom.add_item(wine_bottle)
@@ -116,6 +121,10 @@ class Game:
         coldroom.exits = { "N" : None,  "S" : kitchen, "O" : None, "U" : None, "D" : None}
         library.exits = { "N" : None , "E" : None,  "S" : None,  "O" : hall, "U" : None, "D" : None}
         stairs.exits = { "N" : None, "E" : None, "S" : hall, "O" : None, "U" : None, "D" : None}
+
+        # Création d'une porte verrouillée entre coldroom (N) et cave (S)
+        coldroom.exits['N'] = Door(cave, door_id='cave_door', locked=True)
+        cave.exits['S'] = Door(coldroom, door_id='cave_door', locked=True)
         
         # Setup player and starting room
 
