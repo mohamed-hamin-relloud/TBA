@@ -4,7 +4,7 @@
 
 from room import Room, Door
 from player import Player
-from item import Item, Beamer, Key
+from item import Item, Beamer, Key, Torch
 from command import Command
 from actions import Actions
 
@@ -56,7 +56,7 @@ class Game:
         self.rooms.append(hall)
         diningroom = Room("Diningroom", "dans une immense salle avec une grande table rectangulaire et des dizaines de chaises anciennes.")
         self.rooms.append(diningroom)
-        cave = Room("Cave", "dans une cave où il fait très sombre et où l'atmosphère pensant, une menace à l'air de planer autour de nous.")
+        cave = Room("Cave", "dans une cave où il fait très sombre et où l'atmosphère pensant, une menace à l'air de planer autour de nous.", dark=True)
         self.rooms.append(cave)
         kitchen = Room("Kitchen", "dans une cuisine où l'odeur des plats est reconfortant, on peut y voir des ustensiles en fonte et en bronze.")
         self.rooms.append(kitchen)
@@ -70,7 +70,7 @@ class Game:
         self.rooms.append(stairs)
 
         self.rooms = [hall, diningroom, cave, kitchen, coldroom, livingroom, library, stairs]
-        torch = Item("torch", "une torche en bois qui éclaire faiblement", 1.5)
+        torch = Torch()
         chandelier = Item("chandelier","un grand chandelier en fer forgé suspendu au plafond", 5.0)
         ancient_book = Item("ancient_book", "il y a plein d'anciens livres déposés sur des étagères", 10.0)
         silver_knife = Item("silver_knife", "un couteau en argent finement ouvragé", 0.3)
@@ -99,6 +99,7 @@ class Game:
         cave.add_item(torch)
         cave.add_item(rusty_key)
         cave.add_item(wooden_chest)
+        
 
         kitchen.add_item(frying_pan)
         kitchen.add_item(candle)

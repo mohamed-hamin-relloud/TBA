@@ -49,6 +49,32 @@ class Beamer(Item):
             return "Le beamer n'a pas été chargé. Utilisez 'charge' pour mémoriser une pièce."
 
 
+class Torch(Item):
+    """Une torche que l'on peut allumer pour éclairer la pièce.
+
+    - attribut `lit` (bool) : état de la torche
+    - `use(player)` : allume/éteint la torche et modifie `player.current_room.dark` si nécessaire
+    """
+
+    def __init__(self, name: str = "torch", description: str = "une torche en bois qui éclaire faiblement", weight: float = 1.5):
+        super().__init__(name, description, weight)
+        self.lit = False
+
+    def use(self, player):
+        """Allume ou éteint la torche.
+
+        Si la torche est allumée, la pièce courante est éclairée (dark=False).
+        Si elle est éteinte, la pièce redevient sombre (dark=True).
+        """
+        self.lit = not self.lit
+        if self.lit:
+            player.current_room.dark = False
+            return "Vous allumez la torche. La pièce est désormais éclairée."
+        else:
+            # Éteindre rend la pièce sombre (comportement simple)
+            player.current_room.dark = True
+            return "Vous éteignez la torche. Il fait maintenant plus sombre ici."
+
 class Key(Item):
     """Une clé attachée à une porte identifiée par `door_id`."""
 
@@ -71,15 +97,4 @@ class Key(Item):
         else:
             return f"Cette clé ne correspond pas à la porte {getattr(door, 'id', '<inconnue>')}."
         
-class Torch(Item):
-    def __init__(self):
-        super().__init__("torche", 1)  # Nom et poids
-
-    def use(self, room):
-        """Éclaire une pièce sombre."""
-        if room.dark:
-            room.dark = False
-            return "La pièce est maintenant éclairée grâce à la torche."
-        else:
-            return "Cette pièce est déjà éclairée."
 

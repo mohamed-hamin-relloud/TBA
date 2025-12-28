@@ -5,7 +5,7 @@ from room import Door
 class Player():
 
     # Define the constructor.
-    def __init__(self, name, current_room=None, history=None, max_weight=5.0):
+    def __init__(self, name, current_room=None, history=None, max_weight=10.0):
         """Initialise le joueur.
 
         Args:
