@@ -16,25 +16,35 @@ class Player():
         """
         self.name = name
         self.current_room = current_room
-        self.inventory = []
         self.max_weight = max_weight
         self.current_weight = 0
+        self.inventory = {}
         if history is None:
             self.history = []
         else:
-            self.history = history
+            self.history = [d for d in self.history if d is not None]
+
+        
+       
 
             
     def get_history(self):
-        set_history = set(self.history)
         print("vous avez visité les lieux suivant :\n")
-        for i in set_history:
+        for i in self.history[:len(self.history)-1]:
             if i == None:
                 continue
             else :
                 print(f"\t {i.description}")
         return ""
        
+    
+    def get_inventory(self):
+        inventory = self.inventory
+        if inventory == {}:
+            print("votre inventaire est vide")
+            return False
+        else:
+            return f"Vous disposez des items suivants :\n {inventory.get()}"
     
        
     
@@ -48,6 +58,10 @@ class Player():
             return None
         direction = direction[0].upper()
         next_exit = self.current_room.exits.get(direction)
+        
+        if self.history == []:
+            self.history.append(self.current_room)
+            
 
         # If the next exit is None, print an error message and return False.
         if next_exit is None:

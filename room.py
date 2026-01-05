@@ -20,6 +20,7 @@ class Door:
 # Define the Room class.
 
 from item import Item
+from copy import deepcopy
 
 class Room:
 
@@ -28,10 +29,30 @@ class Room:
         self.name = name
         self.description = description
         self.exits = {}
-        self.inventory = items if items else []
         self.dark = dark  # Pièce sombre ou éclairée
+        if not inventory:
+            self.inventory = {}
+        else:
+            self.inventory = items
+        self.characters = {}
+        
+
 
     # Define the inventory of the current room
+    def get_inventory(self):
+        dict_inventory= self.inventory
+        if dict_inventory == {}:
+            return "il n'y a rien ici"
+        print("\nOn voit :")
+        for i in dict_inventory:
+            print(f"\t {dict_inventory.get(i).name} : {dict_inventory.get(i).description} ({dict_inventory.get(i).weight} kg)")
+        if self.characters == {}:
+            return False
+        else:
+            for i in self.characters:
+                print(f"\t {self.characters.get(i).name} : {self.characters.get(i).description}")
+        print("")  
+        return True
 
         
     

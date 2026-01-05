@@ -20,6 +20,8 @@ MSG0 = "\nLa commande '{command_word}' ne prend pas de paramètre.\n"
 # The MSG1 variable is used when the command takes 1 parameter.
 MSG1 = "\nLa commande '{command_word}' prend 1 seul paramètre.\n"
 
+from copy import deepcopy
+
 class Actions:
 
     @staticmethod
@@ -56,6 +58,7 @@ class Actions:
 
         """
         
+
         player = game.player
         l = len(list_of_words)
         # If the number of parameters is incorrect, print an error message and return False.
@@ -161,16 +164,155 @@ class Actions:
             print(MSG1.format(command_word=command_word))
             return False
         player = game.player
-        historic = player.history
-        if len(historic)==0:
-            print("\nvous ne pouvez plus revenir en arrière ou alors vous n'avez rien visité\n")
+        if len(player.history) == 0:
+            print("\nvous ne pouvez plus revenir en arrière ou alors vous n'avez rien visité.\n")
             return False
         else:
-            room = historic.pop()
-            print(room.get_long_description())
-            player.current_room = room
-            player.get_history()
+            last = player.history.pop()
+            # if not player.history:
+            #     print("\nvous êtes revenu au hall.\n")
+            # last = None
+            # for r in reversed(player.history):
+            #     if r is not None:
+            #         last = r
+            #         break
+            # if last is None:
+            #     print("\nErreur: aucune salle valide dans l'historique.\n")
+            #     return False
+        player.current_room = last
+        print(last.get_long_description())
+        player.get_history()
+        return True
+    
+    def look(game, list_of_words, number_of_parameter):
+        player = game.player
+        actual_room = game.player.current_room
+        if actual_room.inventory == {} :
+            print("\nvous ne voyez rien de particulier dans cette pièce.\n")
+            return False
+        else:
+            actual_room.get_inventory()
+            return True
+
+
+
+
+            #print("\nvous voyez :")
+            #for i in actual_room.inventory:
+                #print(f"\t - {actual_room.inventory.get(i).name} : {actual_room.inventory.get(i).description}")
+            #return True
+    
+    def take(game, list_of_words, number_of_parameter):
+        actual_room_object = game.player.current_room.inventory
+        stuff = game.player.inventory
+        actual_room_copy = deepcopy(actual_room_object)
+        if len(list_of_words) != number_of_parameter + 1:
+            command_word = list_of_words[0]
+            print(MSG1.format(command_word=command_word))
+            return False
+        
+        if actual_room_object== {}:
+            print("\nil n'y a rien ici.\n")
+            return False
+        
+        items = list_of_words[1]
+        
+
+        if items == "":
+            print('\nquel objet voulez vous prendre ?\n')
+            return False
+        
+        if items not in actual_room_object:
+            print("\nil n'y a pas d'objet de la sorte ici.\n")
+            return False
+        else:
+            if stuff == {}:
+                if actual_room_object.get(items).weight > game.player.max_weight:
+                    print(f"\nl'objet {items} est trop lourd.\n")
+                    return False
+                else:
+                    stuff[items] = actual_room_object.get(items)
+                    del actual_room_copy[items]
+                    print(f"\nvous avez récuperé l'objet {items}.\n")
+                    return True
+            s = 0
+            for ele in stuff:
+                s+=stuff.get(ele).weight
+            weight_max = s
+            if actual_room_object.get(items).weight + weight_max > game.player.max_weight:
+                print(f"\nl'objet {items} vous allourdi trop.\n")
+                return False
+            else:
+                stuff[items] = actual_room_object.get(items)
+                del actual_room_copy[items]
+                print(f"\nvous avez récuperé l'objet {items}.\n")
+            weight_max += actual_room_object.get(items).weight
+        game.player.current_room.inventory = actual_room_copy
+        game.player.inventory = stuff
+    
+    def drop(game, list_of_words, number_of_parameter):
+        actual_room_object = game.player.current_room.inventory
+        stuff = game.player.inventory
+        if len(list_of_words) != number_of_parameter + 1:
+            command_word = list_of_words[0]
+            print(MSG1.format(command_word=command_word))
+            return False
+        
+        if stuff == {}:
+            print("\nvous n'avez aucun objet.\n")
+            return False
+        
+        items = list_of_words[1]
+
+        if items == "":
+            print("\ncommande indisponible.\n")
+            return False
+        
+        if items not in stuff:
+            print("\nvous n'avez pas cette objet.\n")
+            return False
+        else:
+            actual_room_object[items] = stuff.get(items)
+            del stuff[items]
+            print(f"\nvous avez déposé l'objet {items}.\n")
+        game.player.current_room.inventory = actual_room_object
+        game.player.inventory = stuff
+
+    
+    def check(game, list_of_words, number_of_parameter):
+        player = game.player
+        bag = player.inventory
+        if  bag == {}:
+            print("\nvous n'avez aucun objet sur vous.\n")
+            return False
+        else:
+            print("\nvous disposez des objets suivant :")
+            for i in bag:
+                print(f"\t - {bag.get(i).name} : {bag.get(i).description}")
+            return True
             
+    def talk(game, list_of_words, number_of_parameter):
+        player = game.player
+        l = len(list_of_words)
+       
+        if l != number_of_parameter + 1:
+            command_word = list_of_words[0]
+            print(MSG1.format(command_word=command_word))
+            return False
+        
+        perso_talking = list_of_words[1]
+        
+        if perso_talking == "":
+            print("\nCommande indisponible.\n")
+            return False
+
+        if perso_talking not in player.current_room.characters:
+            print(f"\n{perso_talking} n'est pas ici.\n")
+            return False
+
+        player.current_room.characters[perso_talking].get_msg()
+        return True
+                   
 
     def look(game, list_of_words, number_of_parameters):
         """

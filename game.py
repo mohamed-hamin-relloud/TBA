@@ -7,6 +7,10 @@ from player import Player
 from item import Item, Beamer, Key, Torch
 from command import Command
 from actions import Actions
+from item import Item
+from character import Character
+
+DEBUG = True
 
 class Game:
 
@@ -16,6 +20,10 @@ class Game:
         self.rooms = []
         self.commands = {}
         self.player = None
+        self.character = None
+        
+    
+
     
     # Setup the game
     def setup(self):
@@ -34,8 +42,16 @@ class Game:
         use = Command("use", " <item> : utiliser un objet (ex: use key, use beamer)", Actions.use, 1)
 
         direction_description = "(N, S, E, O, U, D)" + str(Directions)
+       
         go = Command("go", " <direction> : se déplacer dans une direction cardinale "+direction_description, Actions.go, 1)
         back = Command("back", "reviens en arriere", Actions.back, 0)
+        look = Command("look", "voir les objets dans la pièce", Actions.look, 0)
+        take = Command("take", "prendre les objets selectionnés", Actions.take, 1)
+        drop = Command('drop', 'déposer les objets de votre inventaire', Actions.drop, 1)
+        check = Command("check", "voir les objets dans la pièce", Actions.check, 0)
+        talk = Command('talk', 'parler avec les PNJ', Actions.talk, 1)
+        
+
         directions = set(Directions)
         directions.add("go")
         # self.commands = dict([(Directions[i], go) for i in range(6)])
@@ -50,7 +66,15 @@ class Game:
         self.commands["beamer"] = beamer
         self.commands["charge"] = charge
         self.commands["use"] = use
-       
+
+        
+        #Create Item
+
+        sword = Item("sword", "épée lourde ressemblant à celle des rois d'antan...",20)
+        orbe_de_vie = Item("orbe de vie", "orbe rayonnant une énergie vitale débordante...",9)
+        grimoire = Item("grimoire", "gros livre poussièreux en cuire", 6)
+               
+        #Create Room
 
         hall = Room("Hall", "dans une grande salle de receptions reliant beaucoup de piece entre elles.")
         self.rooms.append(hall)
@@ -58,9 +82,9 @@ class Game:
         self.rooms.append(diningroom)
         cave = Room("Cave", "dans une cave où il fait très sombre et où l'atmosphère pensant, une menace à l'air de planer autour de nous.", dark=True)
         self.rooms.append(cave)
-        kitchen = Room("Kitchen", "dans une cuisine où l'odeur des plats est reconfortant, on peut y voir des ustensiles en fonte et en bronze.")
+        kitchen = Room("Kitchen", "dans une cuisine où l'odeur des plats est reconfortant, on peut y voir des ustensiles en fonte et en bronze.", {"grimoire": grimoire, "orbe-de-vie" : orbe_de_vie} )
         self.rooms.append(kitchen)
-        coldroom = Room("Coldroom", "dans une chambre froide où la nourriture est stockée, l'endroit est assez préoccupant.")
+        coldroom = Room("Coldroom", "dans une chambre froide où la nourriture est stockée, l'endroit est assez préoccupant.", {"sword": sword})
         self.rooms.append(coldroom)
         livingroom = Room("Livingroom", "dans une grande salle avec des canapé, une cheminée et un endroit pour grignotter avec des meubles rustiques.")
         self.rooms.append(livingroom)
@@ -69,7 +93,7 @@ class Game:
         stairs = Room("Stairs", "un grand esclalier reliant l'étage au hall d'entrée fait de marbre et de bois ancien.")
         self.rooms.append(stairs)
 
-        self.rooms = [hall, diningroom, cave, kitchen, coldroom, livingroom, library, stairs]
+        # self.rooms = [hall, diningroom, cave, kitchen, coldroom, livingroom, library, stairs]
         torch = Torch()
         chandelier = Item("chandelier","un grand chandelier en fer forgé suspendu au plafond", 5.0)
         ancient_book = Item("ancient_book", "il y a plein d'anciens livres déposés sur des étagères", 10.0)
@@ -111,7 +135,11 @@ class Game:
 
         library.add_item(ancient_book)
 
+        #Create character
 
+        chief = Character("Chief-cook", "un homme avec une toque", coldroom, ['bonjour cher convive',"à vos fourneaux !", "donnez la poule !"])
+        kitchen.characters[chief.name] = chief
+        
         # Create exits for rooms
 
         hall.exits = { "N" : None, "E" : livingroom, "S" : None, "O" : diningroom , "U" : None, "D" : None}
@@ -132,6 +160,17 @@ class Game:
         self.player = Player(input("\nEntrez votre nom: "))
         self.player.current_room = hall
         
+    def pnj_move(self):
+        for salle in list(self.rooms):
+            for pnj in list(salle.characters):
+                salle.characters.get(pnj).move()
+
+
+
+
+        
+        
+
 
     # Play the game
     def play(self):
@@ -141,6 +180,7 @@ class Game:
         while not self.finished:
             # Get the command from the player
             self.process_command(input(">"))
+            self.pnj_move()
 
         return None
 
