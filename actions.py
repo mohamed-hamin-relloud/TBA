@@ -195,7 +195,6 @@ class Actions:
     def take(game, list_of_words, number_of_parameter):
         actual_room_object = game.player.current_room.inventory
         stuff = game.player.inventory
-        actual_room_copy = deepcopy(actual_room_object)
         if len(list_of_words) != number_of_parameter + 1:
             command_word = list_of_words[0]
             print(MSG1.format(command_word=command_word))
@@ -222,7 +221,7 @@ class Actions:
                     return False
                 else:
                     stuff[items] = actual_room_object.get(items)
-                    del actual_room_copy[items]
+                    del actual_room_object[items]
                     print(f"\nvous avez récuperé l'objet {items}.\n")
                     return True
             s = 0
@@ -234,10 +233,10 @@ class Actions:
                 return False
             else:
                 stuff[items] = actual_room_object.get(items)
-                del actual_room_copy[items]
                 print(f"\nvous avez récuperé l'objet {items}.\n")
             weight_max += actual_room_object.get(items).weight
-        game.player.current_room.inventory = actual_room_copy
+            del actual_room_object[items]
+        game.player.current_room.inventory = actual_room_object
         game.player.inventory = stuff
     
     def drop(game, list_of_words, number_of_parameter):

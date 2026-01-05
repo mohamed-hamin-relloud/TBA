@@ -51,6 +51,7 @@ class Player():
             self.history.append(self.current_room)
             
 
+
         # If the next room is None, print an error message and return False.
         if next_room is None:
             print("\nAucune porte dans cette direction !\n")
