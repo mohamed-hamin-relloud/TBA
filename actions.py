@@ -22,6 +22,13 @@ MSG1 = "\nLa commande '{command_word}' prend 1 seul paramètre.\n"
 
 class Actions:
 
+    @staticmethod
+    def _print_room_state(game):
+        """Affiche la description longue de la salle courante et son inventaire."""
+        player = game.player
+        print(player.current_room.get_long_description())
+        print(player.current_room.get_inventory())
+
     def go(game, list_of_words, number_of_parameters):
         """
         Move the player in the direction specified by the parameter.
@@ -211,6 +218,7 @@ class Actions:
         if current_room.take(item_name, player):
             player.current_weight += item.weight
             print(f"\nVous avez pris {item_name} ({item.weight} kg). Poids actuel: {player.current_weight}/{player.max_weight} kg.\n")
+            Actions._print_room_state(game)
             return True
         else:
             print(f"\nÉchec lors de la prise de l'item '{item_name}'.\n")
@@ -241,6 +249,7 @@ class Actions:
         if current_room.drop(item_name, player):
             player.current_weight = max(0, player.current_weight - item.weight)
             print(f"\nVous avez déposé {item_name}. Poids actuel: {player.current_weight}/{player.max_weight} kg.\n")
+            Actions._print_room_state(game)
             return True
         else:
             print(f"\nÉchec lors du dépôt de l'item '{item_name}'.\n")
@@ -297,6 +306,7 @@ class Actions:
                         if isinstance(rev, Door) and rev.room == player.current_room and rev.id == item.door_id:
                             rev.locked = False
                     print(f"\nVous avez déverrouillé la porte {exit.id} vers {exit.room.name}.\n")
+                    Actions._print_room_state(game)
                     return True
             print("\nAucune porte associée à cette clé n'est accessible depuis cette pièce.\n")
             return False
@@ -306,6 +316,7 @@ class Actions:
             try:
                 msg = item.use(player)
                 print(f"\n{msg}\n")
+                Actions._print_room_state(game)
                 return True
             except TypeError:
                 print("\nImpossible d'utiliser cet item dans ce contexte.\n")
@@ -325,6 +336,7 @@ class Actions:
         player = game.player
         msg = player.use_beamer()
         print(f"\n{msg}\n")
+        Actions._print_room_state(game)
         return True
 
     def charge(game, list_of_words, number_of_parameters):
@@ -339,6 +351,7 @@ class Actions:
             if hasattr(item, "charge"):
                 msg = item.charge(player.current_room)
                 print(f"\n{msg}\n")
+                Actions._print_room_state(game)
                 return True
         print("\nVous ne possédez pas de beamer à charger.\n")
         return False
