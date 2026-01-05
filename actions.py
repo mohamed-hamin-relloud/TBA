@@ -341,11 +341,7 @@ class Actions:
         current_room = player.current_room
 
         # Find the item in the current room
-        item = None
-        for it in current_room.inventory:
-            if it.name.lower() == item_name.lower():
-                item = it
-                break
+        item = current_room.inventory.get(item_name.lower())
 
         if item is None:
             print(f"\nIl n'y a pas d'item nommé '{item_name}' ici.\n")
@@ -378,11 +374,7 @@ class Actions:
         current_room = player.current_room
 
         # Find the item in the player's inventory to get its weight
-        item = None
-        for it in player.inventory:
-            if it.name.lower() == item_name.lower():
-                item = it
-                break
+        item = player.inventory.get(item_name.lower())
 
         if item is None:
             print(f"\nVous n'avez pas d'item nommé {item_name} dans votre inventaire.\n")

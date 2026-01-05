@@ -30,7 +30,7 @@ class Room:
         self.description = description
         self.exits = {}
         self.dark = dark  # Pièce sombre ou éclairée
-        if not inventory:
+        if not items:
             self.inventory = {}
         else:
             self.inventory = items
@@ -88,31 +88,32 @@ class Room:
         if not self.inventory:
             return "Il n'y a rien ici."
         items_str = "\n".join(f"    - {item}" for item in self.inventory)
-        return f"La pièce contient :\n{items_str}"    
+        return f"La pièce contient :\n{items_str}" 
+       
     def add_item(self, item: Item):
-        self.inventory.append(item)
+        self.inventory[item.name.lower()] = item
+
 
     def take(self, item_name, player):
-        for item in self.inventory:
-            if item.name.lower() == item_name.lower():
-                self.inventory.remove(item)
-                player.inventory.append(item)
-                return True
-        return False
+        item = self.inventory.get(item_name.lower())
+        if item is None:
+            return False
+        del self.inventory[item_name.lower()]
+        player.inventory[item_name.lower()] = item
+        return True
 
     def drop(self, item_name, player):
         """Permet de déposer un objet de l'inventaire du joueur dans la pièce."""
-        for item in player.inventory:
-            if item.name.lower() == item_name.lower():
-                player.inventory.remove(item)
-                self.inventory.append(item)
-                return True
-        return False
+        item = player.inventory.get(item_name.lower())
+        if item is None:
+            return False
+        del player.inventory[item_name.lower()]
+        self.inventory[item_name.lower()] = item
+        return True
     
     def check_item(self, item_name):
-        for item in self.inventory:
-            if item.name.lower() == item_name.lower():
-                return True
+        if item_name.lower() in self.inventory:
+            return True
         return False
     
 
