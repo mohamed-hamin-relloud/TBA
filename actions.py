@@ -13,6 +13,9 @@
 
 # The error message is stored in the MSG0 and MSG1 variables and formatted with the command_word variable, the first word in the command.
 # The MSG0 variable is used when the command does not take any parameter.
+from room import Door
+from item import Key
+
 MSG0 = "\nLa commande '{command_word}' ne prend pas de paramètre.\n"
 # The MSG1 variable is used when the command takes 1 parameter.
 MSG1 = "\nLa commande '{command_word}' prend 1 seul paramètre.\n"
@@ -20,6 +23,13 @@ MSG1 = "\nLa commande '{command_word}' prend 1 seul paramètre.\n"
 from copy import deepcopy
 
 class Actions:
+
+    @staticmethod
+    def _print_room_state(game):
+        """Affiche la description longue de la salle courante et son inventaire."""
+        player = game.player
+        print(player.current_room.get_long_description())
+        print(player.current_room.get_inventory())
 
     def go(game, list_of_words, number_of_parameters):
         """
@@ -301,34 +311,187 @@ class Actions:
 
         player.current_room.characters[perso_talking].get_msg()
         return True
-        
-        
-        
-
-
-      
-
-            
-    
-        
-
-
-        
-    
-
-
-            
-
-                   
-            
-
                    
 
-                    
+    def look(game, list_of_words, number_of_parameters):
+        """
+        Display the current room's description and inventory.
+        """
+        if len(list_of_words) != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG0.format(command_word=command_word))
+            return False
+        player = game.player
+        print(player.current_room.get_long_description())
+        print(player.current_room.get_inventory())
+        return True
 
+    def take(game, list_of_words, number_of_parameters):
+        """Take an item from the current room and add it to the player's inventory,
+        respecting the player's max_weight limit.
+        """
+        if len(list_of_words) != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG1.format(command_word=command_word))
+            return False
+
+        player = game.player
+        item_name = list_of_words[1]
+        current_room = player.current_room
+
+        # Find the item in the current room
+        item = current_room.inventory.get(item_name.lower())
+
+        if item is None:
+            print(f"\nIl n'y a pas d'item nommé '{item_name}' ici.\n")
+            return False
+
+        # Check weight limit
+        if player.current_weight + item.weight > player.max_weight:
+            print(f"\nVous ne pouvez pas prendre '{item_name}' : capacité maximale ({player.max_weight} kg) dépassée.\n")
+            return False
+
+        # Transfer item and update weight
+        if current_room.take(item_name, player):
+            player.current_weight += item.weight
+            print(f"\nVous avez pris {item_name} ({item.weight} kg). Poids actuel: {player.current_weight}/{player.max_weight} kg.\n")
+            Actions._print_room_state(game)
+            return True
+        else:
+            print(f"\nÉchec lors de la prise de l'item '{item_name}'.\n")
+            return False
         
+    def drop(game, list_of_words, number_of_parameters):
+        """Drop an item from the player's inventory into the current room and
+        update the player's carried weight."""
+        if len(list_of_words) != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG1.format(command_word=command_word))
+            return False
+        player = game.player
+        item_name = list_of_words[1]
+        current_room = player.current_room
 
+        # Find the item in the player's inventory to get its weight
+        item = player.inventory.get(item_name.lower())
 
+        if item is None:
+            print(f"\nVous n'avez pas d'item nommé {item_name} dans votre inventaire.\n")
+            return False
 
+        if current_room.drop(item_name, player):
+            player.current_weight = max(0, player.current_weight - item.weight)
+            print(f"\nVous avez déposé {item_name}. Poids actuel: {player.current_weight}/{player.max_weight} kg.\n")
+            Actions._print_room_state(game)
+            return True
+        else:
+            print(f"\nÉchec lors du dépôt de l'item '{item_name}'.\n")
+            return False
         
+    def check(game, list_of_words, number_of_parameters):
+        """
+        Check the player's inventory.
+        """
+        if len(list_of_words) != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG0.format(command_word=command_word))
+            return False
+        player = game.player
+        print(player.get_inventory())
+        return True
+        
+    
+    def use(game, list_of_words, number_of_parameters):
+        """Use an item from the player's inventory.
+
+        - If the item is a Key, attempt to unlock an adjacent Door with the same id.
+        - Otherwise, if the item exposes a `use` method, call it.
+        """
+        if len(list_of_words) != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG1.format(command_word=command_word))
+            return False
+        player = game.player
+        item_name = list_of_words[1]
+
+        # Find the item in the player's inventory
+        item = None
+        for it in player.inventory:
+            if it.name.lower() == item_name.lower():
+                item = it
+                break
+
+        if item is None:
+            print(f"\nVous n'avez pas d'item nommé '{item_name}' dans votre inventaire.\n")
+            return False
+
+        # If it's a Key, attempt to unlock a Door adjacent to the player's current room
+        if isinstance(item, Key):
+            for exit in player.current_room.exits.values():
+                if isinstance(exit, Door) and exit.id == item.door_id:
+                    if not exit.locked:
+                        print("\nLa porte est déjà déverrouillée.\n")
+                        return False
+                    exit.locked = False
+                    # Unlock the reverse side if it exists
+                    other = exit.room
+                    for rev in other.exits.values():
+                        if isinstance(rev, Door) and rev.room == player.current_room and rev.id == item.door_id:
+                            rev.locked = False
+                    print(f"\nVous avez déverrouillé la porte {exit.id} vers {exit.room.name}.\n")
+                    Actions._print_room_state(game)
+                    return True
+            print("\nAucune porte associée à cette clé n'est accessible depuis cette pièce.\n")
+            return False
+
+        # Otherwise try to call a 'use' method on the item (beamer, etc.)
+        if hasattr(item, 'use'):
+            try:
+                msg = item.use(player)
+                print(f"\n{msg}\n")
+                Actions._print_room_state(game)
+                return True
+            except TypeError:
+                print("\nImpossible d'utiliser cet item dans ce contexte.\n")
+                return False
+
+        print("\nCet item ne peut pas être utilisé.\n")
+        return False
+
+    def use_beamer(game, list_of_words, number_of_parameters):
+        """
+        Use the beamer to teleport the player to the charged room.
+        """
+        if len(list_of_words) != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG0.format(command_word=command_word))
+            return False
+        player = game.player
+        msg = player.use_beamer()
+        print(f"\n{msg}\n")
+        Actions._print_room_state(game)
+        return True
+
+    def charge(game, list_of_words, number_of_parameters):
+        """Charge le beamer avec la pièce courante (doit être dans l'inventaire)."""
+        if len(list_of_words) != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG0.format(command_word=command_word))
+            return False
+        player = game.player
+        for item in player.inventory:
+            # On cherche un item qui sait "charge" (le Beamer)
+            if hasattr(item, "charge"):
+                msg = item.charge(player.current_room)
+                print(f"\n{msg}\n")
+                Actions._print_room_state(game)
+                return True
+        print("\nVous ne possédez pas de beamer à charger.\n")
+        return False
+
+    def use_torch(self, item_name):
+        for item in self.player.inventory:
+            if isinstance(item, Torch) and item.name.lower() == item_name.lower():
+                return True, item.use(self.player.current_room)
+        return False, "Vous ne possédez pas de torche."
 

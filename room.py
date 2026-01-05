@@ -1,22 +1,42 @@
+# Define the Door helper used to represent an exit that can be locked.
+class Door:
+    """Représente une porte vers une autre salle.
+
+    Attributes:
+        room (Room): la salle vers laquelle la porte mène
+        id (str|None): identifiant optionnel de la porte (utile pour les clés)
+        locked (bool): indique si la porte est verrouillée
+    """
+    def __init__(self, room, door_id: str | None = None, locked: bool = False):
+        self.room = room
+        self.id = door_id
+        self.locked = locked
+
+    def __repr__(self):
+        state = "verrouillée" if self.locked else "ouverte"
+        return f"Door({self.room.name}, id={self.id}, {state})"
+
+
 # Define the Room class.
 
+from item import Item
 from copy import deepcopy
 
 class Room:
 
     # Define the constructor. 
-    def __init__(self, name, description, inventory = None):
+    def __init__(self, name, description, items=None, dark=False):
         self.name = name
         self.description = description
         self.exits = {}
-        if not inventory:
+        self.dark = dark  # Pièce sombre ou éclairée
+        if not items:
             self.inventory = {}
         else:
-            self.inventory = inventory
+            self.inventory = items
         self.characters = {}
         
 
-        
 
     # Define the inventory of the current room
     def get_inventory(self):
@@ -46,12 +66,55 @@ class Room:
     # Return a string describing the room's exits.
     def get_exit_string(self):
         exit_string = "Sorties: " 
-        for exit in self.exits.keys():
-            if self.exits.get(exit) is not None:
-                exit_string += exit + ", "
+        for key, value in self.exits.items():
+            if value is not None:
+                # Si la sortie est une Door, indiquer si elle est verrouillée
+                if isinstance(value, Door) and value.locked:
+                    exit_string += f"{key} (verrouillée), "
+                else:
+                    exit_string += f"{key}, "
         exit_string = exit_string.strip(", ")
         return exit_string
 
     # Return a long description of this room including exits.
     def get_long_description(self):
+        if getattr(self, 'dark', False):
+            return "\nIl fait très sombre ici. Vous pouvez à peine distinguer les contours.\n\n" + self.get_exit_string() + "\n"
         return f"\nVous êtes {self.description}\n\n{self.get_exit_string()}\n"
+    
+    def get_inventory(self):
+        if getattr(self, 'dark', False):
+            return "Il fait trop sombre pour voir les objets ici."
+        if not self.inventory:
+            return "Il n'y a rien ici."
+        items_str = "\n".join(f"    - {item}" for item in self.inventory)
+        return f"La pièce contient :\n{items_str}" 
+       
+    def add_item(self, item: Item):
+        self.inventory[item.name.lower()] = item
+
+
+    def take(self, item_name, player):
+        item = self.inventory.get(item_name.lower())
+        if item is None:
+            return False
+        del self.inventory[item_name.lower()]
+        player.inventory[item_name.lower()] = item
+        return True
+
+    def drop(self, item_name, player):
+        """Permet de déposer un objet de l'inventaire du joueur dans la pièce."""
+        item = player.inventory.get(item_name.lower())
+        if item is None:
+            return False
+        del player.inventory[item_name.lower()]
+        self.inventory[item_name.lower()] = item
+        return True
+    
+    def check_item(self, item_name):
+        if item_name.lower() in self.inventory:
+            return True
+        return False
+    
+
+
