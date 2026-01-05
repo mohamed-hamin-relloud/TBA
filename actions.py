@@ -158,22 +158,21 @@ class Actions:
             print("\nvous ne pouvez plus revenir en arrière ou alors vous n'avez rien visité.\n")
             return False
         else:
-            player.history.pop()
-            if not player.history:
-                print("\nvous êtes revenu au hall.\n")
-                return False
-            last = None
-            for r in reversed(player.history):
-                if r is not None:
-                    last = r
-                    break
-            if last is None:
-                print("\nErreur: aucune salle valide dans l'historique.\n")
-                return False
-            player.current_room = last
-            print(last.get_long_description())
-            player.get_history()
-            return True
+            last = player.history.pop()
+            # if not player.history:
+            #     print("\nvous êtes revenu au hall.\n")
+            # last = None
+            # for r in reversed(player.history):
+            #     if r is not None:
+            #         last = r
+            #         break
+            # if last is None:
+            #     print("\nErreur: aucune salle valide dans l'historique.\n")
+            #     return False
+        player.current_room = last
+        print(last.get_long_description())
+        player.get_history()
+        return True
     
     def look(game, list_of_words, number_of_parameter):
         player = game.player
