@@ -11,12 +11,13 @@ class Player():
             self.history = []
         else:
             self.history = [d for d in self.history if d is not None]
+
+        
        
 
             
     def get_history(self):
         print("vous avez visité les lieux suivant :\n")
-        
         for i in self.history[:len(self.history)-1]:
             if i == None:
                 continue
@@ -45,6 +46,10 @@ class Player():
             return None
         direction = direction[0].upper()
         next_room = self.current_room.exits[direction]
+        
+        if self.history == []:
+            self.history.append(self.current_room)
+            
 
         # If the next room is None, print an error message and return False.
         if next_room is None:
