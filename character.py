@@ -1,5 +1,6 @@
 import random
 from copy import deepcopy
+from room import Door
 
 class Character:
 
@@ -25,8 +26,17 @@ class Character:
             if directions:
                 direction = random.choice(directions)
                 old_room = self.current_room
-                self.current_room = self.current_room.exits[direction]
-                if self.name in old_room.characters:
+                next_exit = self.current_room.exits[direction]
+                # Si la sortie est une Door, vérifier si elle est verrouillée
+                if isinstance(next_exit, Door):
+                    if next_exit.locked:
+                        return "\nLa porte est verrouillée.\n"
+                    destination = next_exit.room
+                else:
+                    destination = next_exit
+
+                self.current_room = destination
+                if hasattr(old_room, 'characters') and self.name in old_room.characters:
                     del old_room.characters[self.name]
                 self.current_room.characters[self.name] = self
                 return True

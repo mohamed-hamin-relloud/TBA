@@ -14,7 +14,7 @@
 # The error message is stored in the MSG0 and MSG1 variables and formatted with the command_word variable, the first word in the command.
 # The MSG0 variable is used when the command does not take any parameter.
 from room import Door
-from item import Key
+from item import Key, Torch
 
 MSG0 = "\nLa commande '{command_word}' ne prend pas de paramètre.\n"
 # The MSG1 variable is used when the command takes 1 parameter.
@@ -414,12 +414,8 @@ class Actions:
         player = game.player
         item_name = list_of_words[1]
 
-        # Find the item in the player's inventory
-        item = None
-        for it in player.inventory:
-            if it.name.lower() == item_name.lower():
-                item = it
-                break
+        # Find the item in the player's inventory (inventory stores name->Item)
+        item = player.inventory.get(item_name.lower())
 
         if item is None:
             print(f"\nVous n'avez pas d'item nommé '{item_name}' dans votre inventaire.\n")
@@ -479,7 +475,7 @@ class Actions:
             print(MSG0.format(command_word=command_word))
             return False
         player = game.player
-        for item in player.inventory:
+        for item in player.inventory.values():
             # On cherche un item qui sait "charge" (le Beamer)
             if hasattr(item, "charge"):
                 msg = item.charge(player.current_room)
@@ -490,7 +486,7 @@ class Actions:
         return False
 
     def use_torch(self, item_name):
-        for item in self.player.inventory:
+        for item in self.player.inventory.values():
             if isinstance(item, Torch) and item.name.lower() == item_name.lower():
                 return True, item.use(self.player.current_room)
         return False, "Vous ne possédez pas de torche."
