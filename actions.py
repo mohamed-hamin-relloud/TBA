@@ -25,8 +25,8 @@ class Actions:
     def _print_room_state(game):
         """Affiche la description longue de la salle courante et son inventaire."""
         player = game.player
-        print(player.current_room.get_long_description())
-        print(player.current_room.get_inventory())
+        player.current_room.get_long_description()
+        player.current_room.get_inventory()
 
     def go(game, list_of_words, number_of_parameters):
         """
@@ -160,12 +160,17 @@ class Actions:
             command_word = list_of_words[0]
             print(MSG1.format(command_word=command_word))
             return False
+        
         player = game.player
-        if len(player.history) == 0:
+        
+        if len(player.history) == 1:
             print("\nvous ne pouvez plus revenir en arrière ou alors vous n'avez rien visité.\n")
+            print(player.history[0].name)
             return False
+        
         else:
-            last = player.history.pop()
+            player.history.pop()
+            last = player.history[-1]
             # if not player.history:
             #     print("\nvous êtes revenu au hall.\n")
             # last = None
@@ -176,9 +181,12 @@ class Actions:
             # if last is None:
             #     print("\nErreur: aucune salle valide dans l'historique.\n")
             #     return False
+        print()
         player.current_room = last
         print(last.get_long_description())
         player.get_history()
+        print([i.name for i in player.history])
+        
         return True
     
     def look(game, list_of_words, number_of_parameter):

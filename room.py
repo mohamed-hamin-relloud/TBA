@@ -31,7 +31,7 @@ class Room:
         for i in dict_inventory:
             print(f"\t {dict_inventory.get(i).name} : {dict_inventory.get(i).description} ({dict_inventory.get(i).weight} kg)")
         if self.characters == {}:
-            return False
+            pass
         else:
             for i in self.characters:
                 print(f"\t {self.characters.get(i).name} : {self.characters.get(i).description}")

@@ -32,9 +32,7 @@ class Player():
     def get_history(self):
         print("vous avez visité les lieux suivant :\n")
         for i in self.history[:len(self.history)-1]:
-            if i == None:
-                continue
-            else :
+            if i is not None:
                 print(f"\t {i.description}")
         return ""
        
@@ -83,6 +81,7 @@ class Player():
         self.current_room = next_room
         print(self.current_room.get_long_description())
         print(self.get_history())
+        print([i.name for i in self.history])
         return True
     
     def get_inventory(self):
