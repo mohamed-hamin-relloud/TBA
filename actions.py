@@ -10,6 +10,7 @@
 # The error message is different depending on the number of parameters expected by the command.
 
 from door import Door
+from item import Key
 
 # The error message is stored in the MSG0 and MSG1 variables and formatted with the command_word variable, the first word in the command.
 # The MSG0 variable is used when the command does not take any parameter.

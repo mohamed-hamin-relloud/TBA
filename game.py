@@ -113,23 +113,7 @@ class Game:
         stairs = Room("Stairs", "un grand esclalier reliant l'étage au hall d'entrée fait de marbre et de bois ancien.")
         self.rooms.append(stairs)
 
-        # self.rooms = [hall, diningroom, cave, kitchen, coldroom, livingroom, library, stairs]
-        torch = Torch()
-        chandelier = Item("chandelier","un grand chandelier en fer forgé suspendu au plafond", 5.0)
-        ancient_book = Item("ancient_book", "il y a plein d'anciens livres déposés sur des étagères", 10.0)
-        silver_knife = Item("silver_knife", "un couteau en argent finement ouvragé", 0.3)
-        rusty_key = Item("rusty_key", "une clé rouillée qui semble ancienne", 0.1)
-        wooden_chest = Item("wooden_chest", "un coffre en bois verrouillé", 10.0)
-        wine_bottle = Item("wine_bottle", "une bouteille de vin scellée, étiquetée d'une année lointaine", 1.2)
-        old_map = Item("old_map", "une carte dessiné à la main, montrant des lieux inconnus", 0.2)
-        candle = Item("candle", "une bougie à moitié consumée", 0.1)
-        frying_pan = Item("frying_pan", "une poêle en fonte lourde et bien usée", 2.5)
-        frozen_meat = Item("frozen_meat", "un morceau de viande gelée, encore comestible", 1.8)
-        painting = Item("painting", "un tableau représentant un paysage mystérieux", 1.0)
-        fireplace_poker = Item("fireplace_poker", "un tisonnier en métal pour la cheminée", 1.5)
-        beamer_item = Beamer()
-        key_for_cave = Key('cave_door')
-
+      
         # Add Item to Room
         hall.add_item(chandelier)
         hall.add_item(old_map)
