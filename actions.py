@@ -9,13 +9,10 @@
 # The functions print an error message if the number of parameters is incorrect.
 # The error message is different depending on the number of parameters expected by the command.
 
-
+from door import Door
 
 # The error message is stored in the MSG0 and MSG1 variables and formatted with the command_word variable, the first word in the command.
 # The MSG0 variable is used when the command does not take any parameter.
-from room import Door
-from item import Key
-
 MSG0 = "\nLa commande '{command_word}' ne prend pas de paramètre.\n"
 # The MSG1 variable is used when the command takes 1 parameter.
 MSG1 = "\nLa commande '{command_word}' prend 1 seul paramètre.\n"
@@ -321,9 +318,10 @@ class Actions:
             command_word = list_of_words[0]
             print(MSG0.format(command_word=command_word))
             return False
+        
         player = game.player
-        print(player.current_room.get_long_description())
-        print(player.current_room.get_inventory())
+        player.current_room.get_long_description()
+        player.current_room.get_inventory()
         return True
 
     def take(game, list_of_words, number_of_parameters):
@@ -402,7 +400,8 @@ class Actions:
         
     
     def use(game, list_of_words, number_of_parameters):
-        """Use an item from the player's inventory.
+        """
+        Use an item from the player's inventory.
 
         - If the item is a Key, attempt to unlock an adjacent Door with the same id.
         - Otherwise, if the item exposes a `use` method, call it.

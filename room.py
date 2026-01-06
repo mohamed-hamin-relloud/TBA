@@ -1,26 +1,8 @@
-# Define the Door helper used to represent an exit that can be locked.
-class Door:
-    """Représente une porte vers une autre salle.
-
-    Attributes:
-        room (Room): la salle vers laquelle la porte mène
-        id (str|None): identifiant optionnel de la porte (utile pour les clés)
-        locked (bool): indique si la porte est verrouillée
-    """
-    def __init__(self, room, door_id: str | None = None, locked: bool = False):
-        self.room = room
-        self.id = door_id
-        self.locked = locked
-
-    def __repr__(self):
-        state = "verrouillée" if self.locked else "ouverte"
-        return f"Door({self.room.name}, id={self.id}, {state})"
-
-
 # Define the Room class.
 
 from item import Item
 from copy import deepcopy
+from door import Door
 
 class Room:
 
@@ -40,6 +22,8 @@ class Room:
 
     # Define the inventory of the current room
     def get_inventory(self):
+        if getattr(self, 'dark', False):
+            return "Il fait trop sombre pour voir les objets ici."
         dict_inventory= self.inventory
         if dict_inventory == {}:
             return "il n'y a rien ici"
@@ -53,6 +37,7 @@ class Room:
                 print(f"\t {self.characters.get(i).name} : {self.characters.get(i).description}")
         print("")  
         return True
+        
 
         
     
@@ -82,14 +67,7 @@ class Room:
             return "\nIl fait très sombre ici. Vous pouvez à peine distinguer les contours.\n\n" + self.get_exit_string() + "\n"
         return f"\nVous êtes {self.description}\n\n{self.get_exit_string()}\n"
     
-    def get_inventory(self):
-        if getattr(self, 'dark', False):
-            return "Il fait trop sombre pour voir les objets ici."
-        if not self.inventory:
-            return "Il n'y a rien ici."
-        items_str = "\n".join(f"    - {item}" for item in self.inventory)
-        return f"La pièce contient :\n{items_str}" 
-       
+
     def add_item(self, item: Item):
         self.inventory[item.name.lower()] = item
 

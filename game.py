@@ -2,7 +2,7 @@
 
 # Import modules
 
-from room import Room, Door
+from room import Room
 from player import Player
 from item import Item, Beamer, Key, Torch
 from command import Command
@@ -62,6 +62,7 @@ class Game:
         self.commands["look"] = look
         self.commands["take"] = take
         self.commands["drop"] = drop
+        self.commands["talk"] = talk
         self.commands["check"] = check
         self.commands["beamer"] = beamer
         self.commands["charge"] = charge
@@ -73,7 +74,26 @@ class Game:
         sword = Item("sword", "épée lourde ressemblant à celle des rois d'antan...",20)
         orbe_de_vie = Item("orbe de vie", "orbe rayonnant une énergie vitale débordante...",9)
         grimoire = Item("grimoire", "gros livre poussièreux en cuire", 6)
-               
+        chandelier = Item("chandelier","un grand chandelier en fer forgé suspendu au plafond", 5.0)
+        ancient_book = Item("ancient_book", "il y a plein d'anciens livres déposés sur des étagères", 10.0)
+        silver_knife = Item("silver_knife", "un couteau en argent finement ouvragé", 0.3)
+        rusty_key = Item("rusty_key", "une clé rouillée qui semble ancienne", 0.1)
+        wooden_chest = Item("wooden_chest", "un coffre en bois verrouillé", 10.0)
+        wine_bottle = Item("wine_bottle", "une bouteille de vin scellée, étiquetée d'une année lointaine", 1.2)
+        old_map = Item("old_map", "une carte dessiné à la main, montrant des lieux inconnus", 0.2)
+        candle = Item("candle", "une bougie à moitié consumée", 0.1)
+        frying_pan = Item("frying_pan", "une poêle en fonte lourde et bien usée", 2.5)
+        frozen_meat = Item("frozen_meat", "un morceau de viande gelée, encore comestible", 1.8)
+        painting = Item("painting", "un tableau représentant un paysage mystérieux", 1.0)
+        fireplace_poker = Item("fireplace_poker", "un tisonnier en métal pour la cheminée", 1.5)
+        beamer_item = Beamer()
+        key_for_cave = Key('cave_door')
+        torch = Torch()       
+       
+     
+        
+        
+        
         #Create Room
 
         hall = Room("Hall", "dans une grande salle de receptions reliant beaucoup de piece entre elles.")
@@ -110,34 +130,46 @@ class Game:
         beamer_item = Beamer()
         key_for_cave = Key('cave_door')
 
+        # Add Item to Room
         hall.add_item(chandelier)
         hall.add_item(old_map)
-        # On ajoute le beamer visible dans le hall pour pouvoir le prendre
+        
+        
+        # Add Item to Hall
         hall.add_item(beamer_item)
-        # On place la clé pour la cave dans la coldroom
+        
+        
+        # Add Item to Coldroom
         coldroom.add_item(key_for_cave)
+        coldroom.add_item(frozen_meat)
 
+        
+        # Add Item to Diningroom
         diningroom.add_item(silver_knife)
         diningroom.add_item(wine_bottle)
 
+        
+        # Add Item to Cave
         cave.add_item(torch)
         cave.add_item(rusty_key)
         cave.add_item(wooden_chest)
         
-
-        kitchen.add_item(frying_pan)
+        
+        # Add Item to Kitchen
+        kitchen.add_item(frying_pan)               
         kitchen.add_item(candle)
 
-        coldroom.add_item(frozen_meat)
-
+        
+        # Add Item to Livingroom
         livingroom.add_item(fireplace_poker)
         livingroom.add_item(painting)
 
+        # Add Item to Library
         library.add_item(ancient_book)
 
-        #Create character
-
-        chief = Character("Chief-cook", "un homme avec une toque", coldroom, ['bonjour cher convive',"à vos fourneaux !", "donnez la poule !"])
+        # Create characters
+ 
+        chief = Character("Chief-cook", "un homme avec une toque", kitchen, ['bonjour cher convive',"à vos fourneaux !", "donnez la poule !"])
         kitchen.characters[chief.name] = chief
         
         # Create exits for rooms
@@ -152,8 +184,7 @@ class Game:
         stairs.exits = { "N" : None, "E" : None, "S" : hall, "O" : None, "U" : None, "D" : None}
 
         # Création d'une porte verrouillée entre coldroom (N) et cave (S)
-        coldroom.exits['N'] = Door(cave, door_id='cave_door', locked=True)
-        cave.exits['S'] = Door(coldroom, door_id='cave_door', locked=True)
+
         
         # Setup player and starting room
 

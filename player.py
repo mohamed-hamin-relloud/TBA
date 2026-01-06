@@ -1,6 +1,7 @@
 # Define the Player class.
 from item import Item, Beamer
-from room import Door
+from door import Door
+
 
 class Player():
 
