@@ -1,6 +1,7 @@
 # Define the Player class.
 from item import Item, Beamer
 from door import Door
+from quest import QuestManager
 
 
 class Player():
@@ -24,6 +25,9 @@ class Player():
             self.history = []
         else:
             self.history = [d for d in self.history if d is not None]
+        self.move_count = 0
+        self.quest_manager = QuestManager(self)
+        self.rewards = []  # List to store earned rewards
 
         
        
@@ -56,8 +60,10 @@ class Player():
             print(f"la commande {direction} n'est pas valide ! Vous ne vous déplacez.")
             return None
         direction = direction[0].upper()
-        next_exit = self.current_room.exits.get(direction)
+        next_exit = self.current_room.exits.get(direction)   
         
+        
+
         if self.history == []:
             self.history.append(self.current_room)
             
@@ -66,6 +72,13 @@ class Player():
         if next_exit is None:
             print("\nAucune porte dans cette direction !\n")
             return False
+        
+        # Check room visit objectives
+        self.quest_manager.check_room_objectives(self.current_room.name)
+
+        # Increment move counter and check movement objectives
+        self.move_count += 1
+        self.quest_manager.check_counter_objectives("Se déplacer", self.move_count)
 
         # If the exit is a Door, check its lock state and get the target room
         if isinstance(next_exit, Door):

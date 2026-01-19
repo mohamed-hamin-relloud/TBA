@@ -27,11 +27,23 @@ class Game:
 
     
     # Setup the game
-    def setup(self):
+    def setup(self, player_name=None):
+
+        self._setup_commands()
+        self._setup_rooms()
+        self._setup_player(player_name)
+        self._setup_quests()
+
+        
+
+    def _setup_commands(self):
+        # Setup commands
+        
         Directions = ['nord', 'sud', 'ouest', 'est', 'up','down']
 
-        # Setup commands
-
+        go = Command("go", " <direction> : se déplacer dans une direction cardinale <N,S,O,E,U,D>", Actions.go, 1)
+        back = Command("back", "reviens en arriere", Actions.back, 0)
+        talk = Command('talk', 'parler avec les PNJ', Actions.talk, 1)
         help = Command("help", " : afficher cette aide", Actions.help, 0)
         quit = Command("quit", " : quitter le jeu", Actions.quit, 0)
         look = Command("look", " : regarder autour de vous", Actions.look, 0)
@@ -42,19 +54,7 @@ class Game:
         charge = Command("charge", " : charger le beamer dans la pièce courante", Actions.charge, 0)
         use = Command("use", " <item> : utiliser un objet (ex: use key, use beamer)", Actions.use, 1)
 
-        direction_description = "(N, S, E, O, U, D)" + str(Directions)
-       
-        go = Command("go", " <direction> : se déplacer dans une direction cardinale "+direction_description, Actions.go, 1)
-        back = Command("back", "reviens en arriere", Actions.back, 0)
-        look = Command("look", "voir les objets dans la pièce", Actions.look, 0)
-        take = Command("take", "prendre les objets selectionnés", Actions.take, 1)
-        drop = Command('drop', 'déposer les objets de votre inventaire', Actions.drop, 1)
-        check = Command("check", "voir les objets dans la pièce", Actions.check, 0)
-        talk = Command('talk', 'parler avec les PNJ', Actions.talk, 1)
         
-
-        directions = set(Directions)
-        directions.add("go")
         # self.commands = dict([(Directions[i], go) for i in range(6)])
         self.commands["go"] = go
         self.commands["help"] = help
@@ -68,9 +68,64 @@ class Game:
         self.commands["beamer"] = beamer
         self.commands["charge"] = charge
         self.commands["use"] = use
+        self.commands["quests"] = Command("quests"
+                                          , " : afficher la liste des quêtes"
+                                          , Actions.quests
+                                          , 0)
+        self.commands["quest"] = Command("quest"
+                                         , " <titre> : afficher les détails d'une quête"
+                                         , Actions.quest
+                                         , 1)
+        self.commands["activate"] = Command("activate"
+                                            , " <titre> : activer une quête"
+                                            , Actions.activate
+                                            , 1)
+        self.commands["rewards"] = Command("rewards"
+                                           , " : afficher vos récompenses"
+                                           , Actions.rewards
+                                           , 0)
+
 
         
-        #Create Item
+             
+       
+     
+        
+        
+        
+        
+    def _setup_rooms(self):    
+
+        #Create Room 
+
+        hall = Room("Hall", "dans une grande salle de receptions reliant beaucoup de piece entre elles.")
+        self.rooms.append(hall)
+        diningroom = Room("Diningroom", "dans une immense salle avec une grande table rectangulaire et des dizaines de chaises anciennes.")
+        self.rooms.append(diningroom)
+        cave = Room("Cave", "dans une cave où il fait très sombre et où l'atmosphère pensant, une menace à l'air de planer autour de nous.", dark=True)
+        self.rooms.append(cave)
+        kitchen = Room("Kitchen", "dans une cuisine où l'odeur des plats est reconfortant, on peut y voir des ustensiles en fonte et en bronze." )
+        self.rooms.append(kitchen)
+        coldroom = Room("Coldroom", "dans une chambre froide où la nourriture est stockée, l'endroit est assez préoccupant.")
+        self.rooms.append(coldroom)
+        livingroom = Room("Livingroom", "dans une grande salle avec des canapé, une cheminée et un endroit pour grignotter avec des meubles rustiques.")
+        self.rooms.append(livingroom)
+        library = Room("Library", "dans une énorme bibliothèque avec plusieurs étages et des livres qui paraissent très ancien.")
+        self.rooms.append(library)
+        stairs = Room("Stairs", "un grand esclalier reliant l'étage au hall d'entrée fait de marbre et de bois ancien.")
+        self.rooms.append(stairs)
+
+
+        hall.exits = { "N" : None, "E" : livingroom, "S" : None, "O" : diningroom , "U" : None, "D" : None}
+        diningroom.exits = {"N" : kitchen, "E" : hall,  "S" : None,"O" : None, "U" : None, "D" : None}
+        livingroom.exits = { "N" : None, "E" : None,  "S" : None, "O" : hall, "U" : None, "D" : None}
+        cave.exits = { "N" : None , "E" : None,  "S" : None, "O" : None,"U" : None, "D" : None}
+        kitchen.exits = { "N" : coldroom , "E" : None, "S" : diningroom, "O" : None, "U" : None, "D" : None}
+        coldroom.exits = { "N" : None,  "S" : kitchen, "O" : None, "U" : None, "D" : None}
+        library.exits = { "N" : None , "E" : None,  "S" : None,  "O" : hall, "U" : None, "D" : None}
+        stairs.exits = { "N" : None, "E" : None, "S" : hall, "O" : None, "U" : None, "D" : None}
+
+     #Create Item
 
         sword = Item("sword", "épée lourde ressemblant à celle des rois d'antan...",20)
         orbe_de_vie = Item("orbe de vie", "orbe rayonnant une énergie vitale débordante...",9)
@@ -87,34 +142,11 @@ class Game:
         frozen_meat = Item("frozen_meat", "un morceau de viande gelée, encore comestible", 1.8)
         painting = Item("painting", "un tableau représentant un paysage mystérieux", 1.0)
         fireplace_poker = Item("fireplace_poker", "un tisonnier en métal pour la cheminée", 1.5)
+        goldenkey = Item("Clé", "Clé lourde et dorée", 0.5)
         beamer_item = Beamer()
         key_for_cave = Key('cave_door')
-        torch = Torch()       
-       
-     
+        torch = Torch() 
         
-        
-        
-        #Create Room
-
-        hall = Room("Hall", "dans une grande salle de receptions reliant beaucoup de piece entre elles.")
-        self.rooms.append(hall)
-        diningroom = Room("Diningroom", "dans une immense salle avec une grande table rectangulaire et des dizaines de chaises anciennes.")
-        self.rooms.append(diningroom)
-        cave = Room("Cave", "dans une cave où il fait très sombre et où l'atmosphère pensant, une menace à l'air de planer autour de nous.", dark=True)
-        self.rooms.append(cave)
-        kitchen = Room("Kitchen", "dans une cuisine où l'odeur des plats est reconfortant, on peut y voir des ustensiles en fonte et en bronze.", {"grimoire": grimoire, "orbe-de-vie" : orbe_de_vie} )
-        self.rooms.append(kitchen)
-        coldroom = Room("Coldroom", "dans une chambre froide où la nourriture est stockée, l'endroit est assez préoccupant.", {"sword": sword})
-        self.rooms.append(coldroom)
-        livingroom = Room("Livingroom", "dans une grande salle avec des canapé, une cheminée et un endroit pour grignotter avec des meubles rustiques.")
-        self.rooms.append(livingroom)
-        library = Room("Library", "dans une énorme bibliothèque avec plusieurs étages et des livres qui paraissent très ancien.")
-        self.rooms.append(library)
-        stairs = Room("Stairs", "un grand esclalier reliant l'étage au hall d'entrée fait de marbre et de bois ancien.")
-        self.rooms.append(stairs)
-
-      
         # Add Item to Room
         hall.add_item(chandelier)
         hall.add_item(old_map)
@@ -132,17 +164,21 @@ class Game:
         # Add Item to Diningroom
         diningroom.add_item(silver_knife)
         diningroom.add_item(wine_bottle)
+        diningroom.add_item(goldenkey)
 
         
         # Add Item to Cave
         cave.add_item(torch)
         cave.add_item(rusty_key)
         cave.add_item(wooden_chest)
+
         
         
         # Add Item to Kitchen
         kitchen.add_item(frying_pan)               
         kitchen.add_item(candle)
+        kitchen.add_item(sword)
+        kitchen.add_item(orbe_de_vie)
 
         
         # Add Item to Livingroom
@@ -151,73 +187,68 @@ class Game:
 
         # Add Item to Library
         library.add_item(ancient_book)
+        library.add_item(grimoire)
 
+        
         # Create characters
- 
         chief = Character("Chief-cook", "un homme avec une toque", kitchen, ['bonjour cher convive',"à vos fourneaux !", "donnez la poule !"])
         kitchen.characters[chief.name] = chief
-        
-        # Create exits for rooms
-
-        hall.exits = { "N" : None, "E" : livingroom, "S" : None, "O" : diningroom , "U" : None, "D" : None}
-        diningroom.exits = {"N" : kitchen, "E" : hall,  "S" : None,"O" : None, "U" : None, "D" : None}
-        livingroom.exits = { "N" : None, "E" : None,  "S" : None, "O" : hall, "U" : None, "D" : None}
-        cave.exits = { "N" : None , "E" : None,  "S" : None, "O" : None,"U" : None, "D" : None}
-        kitchen.exits = { "N" : coldroom , "E" : None, "S" : diningroom, "O" : None, "U" : None, "D" : None}
-        coldroom.exits = { "N" : None,  "S" : kitchen, "O" : None, "U" : None, "D" : None}
-        library.exits = { "N" : None , "E" : None,  "S" : None,  "O" : hall, "U" : None, "D" : None}
-        stairs.exits = { "N" : None, "E" : None, "S" : hall, "O" : None, "U" : None, "D" : None}
+       
 
         # Création d'une porte verrouillée entre coldroom (N) et cave (S)
 
         
         # Setup player and starting room
 
-        self.player = Player(input("\nEntrez votre nom: "))
-        self.player.current_room = hall
+
         
     def pnj_move(self):
         for salle in list(self.rooms):
             for pnj in list(salle.characters):
                 salle.characters.get(pnj).move()
 
+    def _setup_player(self, player_name=None):
+        """Initialize the player."""
+        if player_name is None:
+            player_name = input("\nEntrez votre nom: ")
+
+        self.player = Player(player_name)
+        self.player.current_room = self.rooms[0]  # swamp
+
     def _setup_quests(self):
         """Initialize all quests."""
-        exploration_quest = Quest(
-            title="Grand Explorateur",
-            description="Explorez tous les lieux de ce monde mystérieux.",
-            objectives=["Visiter Forest"
-                        , "Visiter Tower"
-                        , "Visiter Cave"
-                        , "Visiter Cottage"
-                        , "Visiter Castle"],
-            reward="Titre de Grand Explorateur"
+        search_quest = Quest(
+            title="Clé",
+            description="Trouvez la Clé.",
+            objectives=["Trouvez la Clé"],
+            reward="Le dénicheur de Clé"
         )
 
-        travel_quest = Quest(
-            title="Grand Voyageur",
-            description="Déplacez-vous 10 fois entre les lieux.",
-            objectives=["Se déplacer 10 fois"],
-            reward="Bottes de voyageur"
+        fightmonster_quest = Quest(
+            title="Le Combattant",
+            description="Partez à la Recherche d'un Monstre",
+            objectives=["Vaincre le Monstre"],
+            reward="Le tueur de Monstre"
         )
 
         discovery_quest = Quest(
             title="Découvreur de Secrets",
             description="Découvrez les trois lieux les plus mystérieux.",
             objectives=["Visiter Cave"
-                        , "Visiter Tower"
-                        , "Visiter Castle"],
+                        , "Visiter Chambre Froide"
+                        , "Visiter Library"],
             reward="Clé dorée"
         )
 
         # Add quests to player's quest manager
-        self.player.quest_manager.add_quest(exploration_quest)
-        self.player.quest_manager.add_quest(travel_quest)
+        self.player.quest_manager.add_quest(search_quest)
+        self.player.quest_manager.add_quest(fightmonster_quest)
         self.player.quest_manager.add_quest(discovery_quest)
 
 
 
-
+       
+       
 
         
         

@@ -63,6 +63,7 @@ class Room:
 
     # Return a long description of this room including exits.
     def get_long_description(self):
+        
         if getattr(self, 'dark', False):
             return "\nIl fait très sombre ici. Vous pouvez à peine distinguer les contours.\n\n" + self.get_exit_string() + "\n"
         return f"\nVous êtes {self.description}\n\n{self.get_exit_string()}\n"
