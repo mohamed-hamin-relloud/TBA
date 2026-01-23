@@ -352,6 +352,8 @@ class Actions:
         if item is None:
             print(f"\nIl n'y a pas d'item nommé '{item_name}' ici.\n")
             return False
+        
+        player.quest_manager.check_action_objectives(item.name)
 
         # Check weight limit
         if player.current_weight + item.weight > player.max_weight:
