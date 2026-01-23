@@ -353,7 +353,7 @@ class Actions:
             print(f"\nIl n'y a pas d'item nommé '{item_name}' ici.\n")
             return False
         
-        player.quest_manager.check_action_objectives(item.name)
+        game.player.quest_manager.check_action_objectives("prendre", item_name)
 
         # Check weight limit
         if player.current_weight + item.weight > player.max_weight:
@@ -365,6 +365,7 @@ class Actions:
             player.current_weight += item.weight
             print(f"\nVous avez pris {item_name} ({item.weight} kg). Poids actuel: {player.current_weight}/{player.max_weight} kg.\n")
             Actions._print_room_state(game)
+        
             return True
         else:
             print(f"\nÉchec lors de la prise de l'item '{item_name}'.\n")

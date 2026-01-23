@@ -220,7 +220,7 @@ class Game:
         search_quest = Quest(
             title="Clé",
             description="Trouvez la Clé.",
-            objectives=["Trouvez la Clé"],
+            objectives=["prendre Clé"],
             reward="Le dénicheur de Clé"
         )
 
@@ -244,6 +244,11 @@ class Game:
         self.player.quest_manager.add_quest(search_quest)
         self.player.quest_manager.add_quest(fightmonster_quest)
         self.player.quest_manager.add_quest(discovery_quest)
+
+        # Activate quests by default
+        self.player.quest_manager.activate_quest("Clé")
+        self.player.quest_manager.activate_quest("Le Combattant")
+        self.player.quest_manager.activate_quest("Découvreur de Secrets")
 
 
 
