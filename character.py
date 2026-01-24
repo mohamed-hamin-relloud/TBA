@@ -57,9 +57,58 @@ class Character:
             print(f"\n{self.msgs.pop(0)}\n")
         return True
         
+
+class Monster:
+
+    def __init__(self, name, description, health, attack_power, attack_power_description):
+        self.name = name
+        self.description = description
+        self.health = health 
+        self.attack_power = attack_power
+        self.attack_power_description = attack_power_description
+
+    def __str__(self):
+        return f"{self.name} : {self.description} (PV : {self.health}, Attaque : {self.attack_power})"
+    
+    def isliving(self):
+        return self.health > 0
+    
+    def isdead(self):
+        return self.health <= 0
+    
+    def attack_using(self):
+        return f"{self.name} vous {self.attack_power_description}"
+    
+    def begin_attack(self)
+        return f"{self.name} s'approche de vous dangereusement !"
+    
+    def fight(self, game.player):
+        """
+        Docstring for fight
+
+        description : player fight with monster
         
+        
+        """
+        print("Appuyez sur la touche 1 pour combattre sinon sur la touche 0 pour fuir")
+        print("\t   -  0  :  fuir\n - 1  :  attaquer")
+        on = True
+        while on:
+            decision = input(">")
+            if decision.isdigit():
+                if decision == "0":
+                    #ecrire code fuite
+                    on = False
 
-
+                if decision == "1":
+                    "ecrire code attaque"
+                    on = False
+            
+            else:
+                print("commandes non valides")
+    
+                
+        
 
             
 

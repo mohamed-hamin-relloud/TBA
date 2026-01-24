@@ -163,3 +163,10 @@ class Player():
                 for reward in self.rewards:
                     print(f"  • {reward}")
                 print()
+
+
+    
+
+
+
+

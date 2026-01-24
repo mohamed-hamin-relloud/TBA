@@ -17,6 +17,7 @@ class Room:
         else:
             self.inventory = items
         self.characters = {}
+        self.monsters = {}
         
 
 

@@ -11,6 +11,7 @@
 
 from door import Door
 from item import Key
+from character import Monster
 
 # The error message is stored in the MSG0 and MSG1 variables and formatted with the command_word variable, the first word in the command.
 # The MSG0 variable is used when the command does not take any parameter.
@@ -694,4 +695,29 @@ class Actions:
 
         # Show all rewards
         game.player.show_rewards()
+        return True
+    
+
+
+    def fight(game, list_of_words, number_of_parameter):
+        player = game.player
+        l = len(list_of_words)
+       
+        if l != number_of_parameter + 1:
+            command_word = list_of_words[0]
+            print(MSG1.format(command_word=command_word))
+            return False
+        
+        monster_fighting_name = list_of_words[1]
+        
+        if monster_fighting_name == "":
+            print("\nCommande indisponible.\n")
+            return False
+
+        if monster_fighting_name not in player.current_room.monsters:
+            print(f"\n{monster_fighting_name} n'est pas ici.\n")
+            return False
+        
+        print(game.player.current_room.monsters[monster_fighting_name].begin_attack())
+        player.current_room.monsters[monster_fighting_name].fight(player)
         return True
