@@ -97,4 +97,24 @@ class Key(Item):
         else:
             return f"Cette clé ne correspond pas à la porte {getattr(door, 'id', '<inconnue>')}."
         
+class Weapon(Item):
+    
+    def __init__(self, name: str, description: str, weight: float, damage : int):
+        super().__init__(name,description,weight)
+        self.damage = damage
+
+    def isequipped(self):
+        return True
+    
+    def isnot_equipped(self):
+        return False
+
+    def __str__(self):
+        return f"{self.name} : {self.description} ({self.weight} kg) ({"Equipé" if self.isequipped() else "Pas équipé"}) "
+
+    
+
+    
+
+        
 

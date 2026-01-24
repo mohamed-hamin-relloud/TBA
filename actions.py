@@ -10,7 +10,7 @@
 # The error message is different depending on the number of parameters expected by the command.
 
 from door import Door
-from item import Key
+from item import Key, Weapon
 from character import Monster
 
 # The error message is stored in the MSG0 and MSG1 variables and formatted with the command_word variable, the first word in the command.
@@ -319,6 +319,7 @@ class Actions:
         player.current_room.characters[perso_talking].get_msg()
         return True
                    
+    
 
     def look(game, list_of_words, number_of_parameters):
         """
@@ -719,5 +720,25 @@ class Actions:
             return False
         
         print(game.player.current_room.monsters[monster_fighting_name].begin_attack())
-        player.current_room.monsters[monster_fighting_name].fight(player)
+        player.fight(player.current_room.monsters[monster_fighting_name])
+        return True
+    
+
+    def equip(game, list_of_words, number_of_parameter):
+        player = game.player
+        l = len(list_of_words)
+       
+        if l != number_of_parameter + 1:
+            command_word = list_of_words[0]
+            print(MSG1.format(command_word=command_word))
+            return False
+        
+        weapons_equip = list_of_words[1]
+
+        if weapons_equip not in player.inventory or type(player.inventory[weapons_equip]) != Weapon:
+            print("Vous n'avez pas cette arme")
+            return False
+        
+        player.weapons = player.inventory[weapons_equip]
+        player.equip(player.weapons)
         return True

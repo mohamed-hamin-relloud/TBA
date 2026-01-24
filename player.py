@@ -1,5 +1,5 @@
 # Define the Player class.
-from item import Item, Beamer
+from item import Item, Beamer, Weapon
 from door import Door
 from quest import QuestManager
 
@@ -7,7 +7,7 @@ from quest import QuestManager
 class Player():
 
     # Define the constructor.
-    def __init__(self, name, current_room=None, history=None, max_weight=10.0):
+    def __init__(self, name, current_room=None, history=None, max_weight=10.0, weapons = None, hp=60):
         """Initialise le joueur.
 
         Args:
@@ -28,9 +28,14 @@ class Player():
         self.move_count = 0
         self.quest_manager = QuestManager(self)
         self.rewards = []  # List to store earned rewards
+        self.weapons = weapons
+        self.hp = hp
 
+    
         
-       
+    def equip(self, weapons):
+        print(f"Vous vous êtes équipé de {weapons.name}!")
+        weapons.isequipped()
 
             
     def get_history(self):
@@ -40,17 +45,6 @@ class Player():
                 print(f"\t {i.description}")
         return ""
        
-    
-    def get_inventory(self):
-        inventory = self.inventory
-        if inventory == {}:
-            print("votre inventaire est vide")
-            return False
-        else:
-            return f"Vous disposez des items suivants :\n {inventory.get()}"
-    
-       
-    
 
     # Define the move method.
     def move(self, direction):
@@ -163,8 +157,49 @@ class Player():
                 for reward in self.rewards:
                     print(f"  • {reward}")
                 print()
+    
+    def weapons_attack(self, weapon):
+        print(f"Vous attaquez avec {weapon.name}!")
+
+    def fighting(self, target):
+        self.weapons_attack(self.weapons)
+        target.fighting(self)
+        target.health-= self.weapons.damage
+        self.hp -= target.attack_damage
+
+        print(f"Vous avez maintenant {self.hp} PV!")
+        print(f"{target.name} à maintenant {target.health} PV!")
+
+    def fight(self, target):
+        """
+        Docstring for fight
+
+        description : player fight with monster
+        
+        
+        """
+        print("Appuyez sur la touche 1 pour combattre sinon sur la touche 0 pour fuir")
+        print("\t   -  0  :  fuir\n\t   -  1  :  attaquer")
+        on = True
+        while on:
+            decision = input(">")
+            if decision.isdigit():
+                if decision == "0":
+                    print(f"vous sortez de {self.current_room.name}")
+                    self.history.pop()
+                    self.current_room = self.history[-1]
+                    print(self.current_room.get_long_description())
+                    on = False
+
+                if decision == "1":
+                    self.fighting(target)
+                    on = False
+            
+            else:
+                print("commandes non valides")
 
 
+    
     
 
 

@@ -31,11 +31,13 @@ class Room:
         print("\nOn voit :")
         for i in dict_inventory:
             print(f"\t {dict_inventory.get(i).name} : {dict_inventory.get(i).description} ({dict_inventory.get(i).weight} kg)")
-        if self.characters == {}:
+        if self.characters == {} and self.monsters == {}:
             pass
         else:
             for i in self.characters:
                 print(f"\t {self.characters.get(i).name} : {self.characters.get(i).description}")
+            for j in self.monsters:
+                print(f"\t {self.monsters.get(j).name} : {self.monsters.get(j).description}")
         print("")  
         return True
         

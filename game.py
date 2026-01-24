@@ -4,12 +4,12 @@
 
 from room import Room
 from player import Player
-from item import Item, Beamer, Key, Torch
+from item import Item, Beamer, Key, Torch, Weapon
 from command import Command
 from actions import Actions
-from item import Item
-from character import Character
+from character import Character, Monster
 from quest import Quest
+
 
 DEBUG = True
 
@@ -84,12 +84,23 @@ class Game:
                                            , " : afficher vos récompenses"
                                            , Actions.rewards
                                            , 0)
+        self.commands["fight"] = Command("fight"
+                                         , " : combattre <ennemi>"
+                                         , Actions.fight
+                                         , 1)
+        self.commands["equip"] = Command("equip"
+                                         , " : s'équipper de <arme>"
+                                         , Actions.equip
+                                         , 1)
 
 
         
              
        
-     
+    
+
+        
+       
         
         
         
@@ -127,7 +138,7 @@ class Game:
 
      #Create Item
 
-        sword = Item("sword", "épée lourde ressemblant à celle des rois d'antan...",20)
+        sword = Weapon("sword", "épée lourde ressemblant à celle des rois d'antan...",5, 19)
         orbe_de_vie = Item("orbe de vie", "orbe rayonnant une énergie vitale débordante...",9)
         grimoire = Item("grimoire", "gros livre poussièreux en cuire", 6)
         chandelier = Item("chandelier","un grand chandelier en fer forgé suspendu au plafond", 5.0)
@@ -146,6 +157,10 @@ class Game:
         beamer_item = Beamer()
         key_for_cave = Key('cave_door')
         torch = Torch() 
+
+        
+        # Define monster
+        demon = Monster('démon', 'démon de taille humain avec des cornes ressemblant à un dragon humanoïde', 50, "boule de feu", "une vague de feu ardente ", 15 )
         
         # Add Item to Room
         hall.add_item(chandelier)
@@ -193,6 +208,9 @@ class Game:
         # Create characters
         chief = Character("Chief-cook", "un homme avec une toque", kitchen, ['bonjour cher convive',"à vos fourneaux !", "donnez la poule !"])
         kitchen.characters[chief.name] = chief
+
+        # Add monsters in rooms
+        coldroom.monsters["démon"] = demon
        
 
         # Création d'une porte verrouillée entre coldroom (N) et cave (S)
@@ -250,10 +268,7 @@ class Game:
         self.player.quest_manager.activate_quest("Le Combattant")
         self.player.quest_manager.activate_quest("Découvreur de Secrets")
 
-
-
-       
-       
+    
 
         
         
