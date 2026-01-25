@@ -318,7 +318,36 @@ class Quest:
             if self.complete_objective(objective, player):
                 return True
         return False
+    
+    def check_resolve_objective(self, Enigma_name, player=None):
+        """
+        Check if resolve a specific enigma completes an objective.
+        
+        Args:
+            room_name (str): The name of the enigma resolved.
+            player: The player object (optional).
+            
+        Returns:
+            bool: True if an objective was completed, False otherwise.
+            
+        Examples:
+        
+        >>> quest = Quest("Resolve", "Resolve the enigma", ["Résoudre Enigme1"])
+        >>> quest.check_resolve_objective("Enigme1")
+        ✅ Objectif accompli: Resolve Enigma
+        <BLANKLINE>
+        🏆 Quête terminée: Resolve
+        <BLANKLINE>
+        True
+        >>> quest.check_resolve_objective("Enigme2")
+        False
+        """
+        resolve_objectives = [f"Résoudre {Enigma_name}"]
 
+        for objective in resolve_objectives:
+            if self.complete_objective(objective, player):
+                return True
+        return False
 
     def check_counter_objective(self, counter_name, current_count, player=None):
         """

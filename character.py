@@ -60,13 +60,14 @@ class Character:
 
 class Monster:
 
-    def __init__(self, name, description, health, attack_power, attack_power_description, attack_damage):
+    def __init__(self, name, description, health, attack_power, attack_power_description, attack_damage, exp):
         self.name = name
         self.description = description
         self.health = health 
         self.attack_power = attack_power
         self.attack_power_description = attack_power_description
         self.attack_damage = attack_damage
+        self.exp = exp
 
     def __str__(self):
         return f"{self.name} : {self.description} (PV : {self.health}, Attaque : {self.attack_power})"
@@ -83,7 +84,7 @@ class Monster:
     def begin_attack(self):
         return f"{self.name} s'approche de vous dangereusement !"
     
-    def fighting(self, target):
+    def fighting(self):
         self.attack_using()
         
 

@@ -4,11 +4,12 @@
 
 from room import Room
 from player import Player
-from item import Item, Beamer, Key, Torch, Weapon
+from item import Item, Beamer, Key, Torch, Weapon, Book, InvisibilityCloak, Desintegrator
 from command import Command
 from actions import Actions
 from character import Character, Monster
 from quest import Quest
+from door import Door
 
 
 DEBUG = True
@@ -92,7 +93,10 @@ class Game:
                                          , " : s'équipper de <arme>"
                                          , Actions.equip
                                          , 1)
-
+        self.commands["read"] = Command("read"
+                                         , " : s'équipper de <arme>"
+                                         , Actions.read
+                                         , 1)
 
         
              
@@ -123,22 +127,37 @@ class Game:
         self.rooms.append(livingroom)
         library = Room("Library", "dans une énorme bibliothèque avec plusieurs étages et des livres qui paraissent très ancien.")
         self.rooms.append(library)
-        stairs = Room("Stairs", "un grand esclalier reliant l'étage au hall d'entrée fait de marbre et de bois ancien.")
-        self.rooms.append(stairs)
-
-
-        hall.exits = { "N" : None, "E" : livingroom, "S" : None, "O" : diningroom , "U" : None, "D" : None}
+        clearence = Room("Clearence", "un débarras sombre et rempli d'objets, vous entendez du bruit, sûrement des rats...")
+        self.rooms.append(clearence)
+        laboratory = Room('Laboratory', "un laboratoire de science avec des machines, ordinateurs, celui à qui appartenait ce laboratoire devait être brillant...")
+        self.rooms.append(laboratory)
+        
+        hall.exits = { "N" : library, "E" : livingroom, "S" : None, "O" : diningroom , "U" : None, "D" : None}
         diningroom.exits = {"N" : kitchen, "E" : hall,  "S" : None,"O" : None, "U" : None, "D" : None}
-        livingroom.exits = { "N" : None, "E" : None,  "S" : None, "O" : hall, "U" : None, "D" : None}
-        cave.exits = { "N" : None , "E" : None,  "S" : None, "O" : None,"U" : None, "D" : None}
+        livingroom.exits = { "N" : None, "E" : laboratory,  "S" : None, "O" : hall, "U" : None, "D" : None}
+        cave.exits = { "N" : None , "E" : None,  "S" : None, "O" : coldroom,"U" : None, "D" : None}
         kitchen.exits = { "N" : coldroom , "E" : None, "S" : diningroom, "O" : None, "U" : None, "D" : None}
-        coldroom.exits = { "N" : None,  "S" : kitchen, "O" : None, "U" : None, "D" : None}
-        library.exits = { "N" : None , "E" : None,  "S" : None,  "O" : hall, "U" : None, "D" : None}
-        stairs.exits = { "N" : None, "E" : None, "S" : hall, "O" : None, "U" : None, "D" : None}
+        coldroom.exits = { "N" : None,  "S" : kitchen, "O" : None, "E" : cave, "U" : None, "D" : None}
+        library.exits = { "N" : None , "E" : clearence,  "S" : hall,  "O" : None, "U" : None, "D" : None}
+        clearence.exits = { "N" : None, "E" : None, "S" : None, "O" : library, "U" : None, "D" : None}
+        laboratory.exits = { "N" : None, "E" : None, "S" : None, "O" : livingroom, "U" : None, "D" : None}
+        
+        #Create doors
+        door_1 = Door(0x01, library, clearence, locked=True)
+        library.door.append(door_1)
+        clearence.door.append(door_1)
+        door_2 = Door(0x02, kitchen, coldroom, locked=True)
+        coldroom.door.append(door_2)
+        cave.door.append(door_2)
+        door_3 = Door(0x03, coldroom, cave, locked=True)
+        coldroom.door.append(door_3)
+        cave.door.append(door_3)
 
-     #Create Item
 
-        sword = Weapon("sword", "épée lourde ressemblant à celle des rois d'antan...",5, 19)
+
+
+        #Create Item
+
         orbe_de_vie = Item("orbe de vie", "orbe rayonnant une énergie vitale débordante...",9)
         grimoire = Item("grimoire", "gros livre poussièreux en cuire", 6)
         chandelier = Item("chandelier","un grand chandelier en fer forgé suspendu au plafond", 5.0)
@@ -153,64 +172,82 @@ class Game:
         frozen_meat = Item("frozen_meat", "un morceau de viande gelée, encore comestible", 1.8)
         painting = Item("painting", "un tableau représentant un paysage mystérieux", 1.0)
         fireplace_poker = Item("fireplace_poker", "un tisonnier en métal pour la cheminée", 1.5)
-        goldenkey = Item("Clé", "Clé lourde et dorée", 0.5)
-        beamer_item = Beamer()
-        key_for_cave = Key('cave_door')
+        beamer = Beamer()
         torch = Torch() 
 
+        #important items for game
+        goldenkey = Key("clé_en_or", "Clé en Or et Semble Ancienne", 0.55, 0x02)
+        #silverkey = Key("clé_en_argent", "Clé en Argent poussièreux", 0.5, 0x01)#
+        diamondkey = Key("clé_en_diamant", "Clé en Diamand Etincellant", 0.5, 0x03)
+        sword = Weapon("sword", "épée lourde ressemblant à celle des rois d'antan...",5, 19)
+        Enigmabook = Book("livre_marron", "livre épais semblant être ordinaire", 1.2, 260)
+        philosopher_stone = Item("pierre_philosophale", "Pierre incruster de minerais aux reflets oranges donnant l'immortalité", 1.5)
+        colt = Weapon("colt", "un revolver de calibre .45, classique mais efficace", 1.0, 25)
+        desintegrator = Desintegrator("desintegrator", "un pistolet laser futuriste capable de désintégrer la matière", 2.0, 50)
+        invisibility_cloak = InvisibilityCloak("long_cloak", "une longue cape qui semble à première vue ordinaire", 1.0)
         
-        # Define monster
-        demon = Monster('démon', 'démon de taille humain avec des cornes ressemblant à un dragon humanoïde', 50, "boule de feu", "une vague de feu ardente ", 15 )
         
         # Add Item to Room
         hall.add_item(chandelier)
         hall.add_item(old_map)
         
-        
         # Add Item to Hall
-        hall.add_item(beamer_item)
-        
         
         # Add Item to Coldroom
-        coldroom.add_item(key_for_cave)
         coldroom.add_item(frozen_meat)
-
         
         # Add Item to Diningroom
         diningroom.add_item(silver_knife)
         diningroom.add_item(wine_bottle)
         diningroom.add_item(goldenkey)
 
-        
         # Add Item to Cave
         cave.add_item(torch)
         cave.add_item(rusty_key)
         cave.add_item(wooden_chest)
 
-        
+        # Add Item to Clearence
+        clearence.add_item(sword)
+        clearence.add_item(colt)
+
+        # Add Item to Laboratory
+        laboratory.add_item(desintegrator)
+        laboratory.add_item(beamer)
         
         # Add Item to Kitchen
         kitchen.add_item(frying_pan)               
         kitchen.add_item(candle)
-        kitchen.add_item(sword)
         kitchen.add_item(orbe_de_vie)
 
-        
         # Add Item to Livingroom
         livingroom.add_item(fireplace_poker)
         livingroom.add_item(painting)
+        livingroom.add_item(invisibility_cloak)
 
         # Add Item to Library
         library.add_item(ancient_book)
         library.add_item(grimoire)
+        library.add_item(Enigmabook)
 
-        
+
         # Create characters
         chief = Character("Chief-cook", "un homme avec une toque", kitchen, ['bonjour cher convive',"à vos fourneaux !", "donnez la poule !"])
+        
+        # Add Characters in Rooms
         kitchen.characters[chief.name] = chief
 
+
+        # Define monster
+        humanbird = Monster('Humanbird', 'Oiseau humanoïde entièrement noir avec une tête et des ailes de Pygarde ', 100, "boule de feu", "une vague de feu ardente ", 30, 20)
+        gargouille = Monster('Gargouille', "Petit dragon bleu avec des griffes acérées et des yeux rouges", 25, 'griffure',"coups de griffres acérées", 10, 9)
+        demon = Monster("Demon", "entitée malveillante aux yeux rouges et entièrement recouverte d'une fumée sombre", 200, "Poings explosifs", "Coup de poing de ténébre laissant s'echapper des éclairs violets", 50, 90)
+
         # Add monsters in rooms
-        coldroom.monsters["démon"] = demon
+        cave.monsters["Demon"] = demon
+        coldroom.monsters["Humanbird"] = humanbird
+        livingroom.monsters["Gargouille"] = gargouille
+
+
        
 
         # Création d'une porte verrouillée entre coldroom (N) et cave (S)
@@ -232,46 +269,77 @@ class Game:
 
         self.player = Player(player_name)
         self.player.current_room = self.rooms[0]  # swamp
+        self.player.game = self
 
     def _setup_quests(self):
         """Initialize all quests."""
-        search_quest = Quest(
-            title="Clé",
-            description="Trouvez la Clé.",
-            objectives=["prendre Clé"],
-            reward="Le dénicheur de Clé"
+        key_quest = Quest(
+            title="Dénicheur de Clés",
+            description="Trouvez les Differentes Clés.",
+            objectives=["prendre goldenkey",
+                        "prendre silverkey",
+                        "prendre diamondkey"],
+            reward="Le dénicheur de Clés"
         )
 
-        fightmonster_quest = Quest(
-            title="Le Combattant",
-            description="Partez à la Recherche d'un Monstre",
-            objectives=["Vaincre le Monstre"],
-            reward="Le tueur de Monstre"
+        gargouille_quest = Quest(
+            title="Le Petit Combattant",
+            description="Vaincre la Gargouille dans le salon",
+            objectives=["vaincre gargouille"],
+            reward="Un Chasseur est Né !"
         )
 
-        discovery_quest = Quest(
-            title="Découvreur de Secrets",
-            description="Découvrez les trois lieux les plus mystérieux.",
-            objectives=["Visiter Cave"
-                        , "Visiter Chambre Froide"
-                        , "Visiter Library"],
-            reward="Clé dorée"
+        enigme_quest = Quest(
+            title="En Quête d'Enigme",
+            description="Resolvez une énigme.",
+            objectives=["resoudre enigma"],
+            reward="Clé en Argent"
         )
 
-        # Add quests to player's quest manager
-        self.player.quest_manager.add_quest(search_quest)
-        self.player.quest_manager.add_quest(fightmonster_quest)
-        self.player.quest_manager.add_quest(discovery_quest)
+        laser_quest = Quest(
+            title="Le désintégrateur",
+            description="Trouvez un désintegrateur.",
+            objectives=["prendre desintegrator"],
+            reward="Soldat Prêt à Eradiquer les Monstres "
+        )
 
-        # Activate quests by default
-        self.player.quest_manager.activate_quest("Clé")
-        self.player.quest_manager.activate_quest("Le Combattant")
-        self.player.quest_manager.activate_quest("Découvreur de Secrets")
+        demon_quest = Quest(
+            title="Le Boss",
+            description="Vaincre le Boss.",
+            objectives=["vaincre demon"],
+            reward="Pierre Philosophale"
+        )
+        self.player.quest_manager.add_quest(key_quest)
+        self.player.quest_manager.add_quest(gargouille_quest)
+        self.player.quest_manager.add_quest(enigme_quest)
+        self.player.quest_manager.add_quest(laser_quest)
+        self.player.quest_manager.add_quest(demon_quest)
+        
+        self.player.quest_manager.activate_quest("Dénicheur de Clés")
+        self.player.quest_manager.activate_quest("Le Boss")    
+        
+
+       
 
     
 
         
-        
+    def win(self, target=None):
+        if target and target.name == 'demon':
+            print("Vous avez vaincu le démon ! Victoire totale !")
+            self.player.quest_manager.check_action_objectives("vaincre", f"{target.name}")
+            self.player.inventory["philosopher_stone"] = Item("philosopher_stone", "Pierre incrustée de minerais aux reflets oranges donnant l'immortalité", 1.5)
+            self.finished = True
+        else:
+            self.player.hp += target.exp
+            print("Vous avez gagnez !")
+            print(f"Vous gagnez {target.exp} PV supplémentaire ! Plus vous vainquerai, plus vous deviendrai fort jeune combattant !")
+            self.player.quest_manager.check_action_objectives("vaincre", f"{target.name}")
+
+
+    def lose(self):
+        print("Vous avez PERDU : GAME OVER !")
+        self.finished = True
 
 
     # Play the game

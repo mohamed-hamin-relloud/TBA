@@ -65,17 +65,17 @@ class Actions:
             command_word = list_of_words[0]
             print(MSG1.format(command_word=command_word))
             return False
+    
+ 
         
+
 
         # Get the direction from the list of words.
         direction = list_of_words[1]
         
-         # Move the player in the direction specified by the parameter
-        if direction != list_of_words[1] and list_of_words[1].upper() and list_of_words[1].lower() and list_of_words[1][0] and list_of_words[1][0].upper() and list_of_words[1][0].lower():
-            print(f"{direction} inacessible, vous n'avancez pas !")
-        else:
-            player.move(direction)
-            return True
+        # Move the player in the direction specified by the parameter
+        player.move(direction)
+        return True
 
     def quit(game, list_of_words, number_of_parameters):
         """
@@ -173,22 +173,11 @@ class Actions:
         else:
             player.history.pop()
             last = player.history[-1]
-            # if not player.history:
-            #     print("\nvous êtes revenu au hall.\n")
-            # last = None
-            # for r in reversed(player.history):
-            #     if r is not None:
-            #         last = r
-            #         break
-            # if last is None:
-            #     print("\nErreur: aucune salle valide dans l'historique.\n")
-            #     return False
+            
         print()
         player.current_room = last
         print(last.get_long_description())
         player.get_history()
-        print([i.name for i in player.history])
-        
         return True
     
     def look(game, list_of_words, number_of_parameter):
@@ -204,10 +193,7 @@ class Actions:
 
 
 
-            #print("\nvous voyez :")
-            #for i in actual_room.inventory:
-                #print(f"\t - {actual_room.inventory.get(i).name} : {actual_room.inventory.get(i).description}")
-            #return True
+          
     
     def take(game, list_of_words, number_of_parameter):
         actual_room_object = game.player.current_room.inventory
@@ -351,12 +337,16 @@ class Actions:
         # Find the item in the current room
         item = current_room.inventory.get(item_name.lower())
 
+
         if item is None:
             print(f"\nIl n'y a pas d'item nommé '{item_name}' ici.\n")
             return False
         
         game.player.quest_manager.check_action_objectives("prendre", item_name)
-
+        
+        # Weapons activated in player attribute
+        if type(item) == Weapon and player.weapons == None:
+            player.weapons = item        
         # Check weight limit
         if player.current_weight + item.weight > player.max_weight:
             print(f"\nVous ne pouvez pas prendre '{item_name}' : capacité maximale ({player.max_weight} kg) dépassée.\n")
@@ -394,6 +384,9 @@ class Actions:
         if current_room.drop(item_name, player):
             player.current_weight = max(0, player.current_weight - item.weight)
             print(f"\nVous avez déposé {item_name}. Poids actuel: {player.current_weight}/{player.max_weight} kg.\n")
+            player.current_room.inventory[item_name.lower()].equiped = False
+            if isinstance(item, Weapon):
+                del player.equiped_weapons[player.equiped_weapons.index(item)]
             Actions._print_room_state(game)
             return True
         else:
@@ -436,19 +429,13 @@ class Actions:
 
         # If it's a Key, attempt to unlock a Door adjacent to the player's current room
         if isinstance(item, Key):
-            for exit in player.current_room.exits.values():
-                if isinstance(exit, Door) and exit.id == item.door_id:
-                    if not exit.locked:
+            for porte in player.current_room.door:
+                if porte.id == item.door_id:
+                    if not porte.locked:
                         print("\nLa porte est déjà déverrouillée.\n")
                         return False
-                    exit.locked = False
-                    # Unlock the reverse side if it exists
-                    other = exit.room
-                    for rev in other.exits.values():
-                        if isinstance(rev, Door) and rev.room == player.current_room and rev.id == item.door_id:
-                            rev.locked = False
-                    print(f"\nVous avez déverrouillé la porte {exit.id} vers {exit.room.name}.\n")
-                    Actions._print_room_state(game)
+                    porte.locked = False
+                    print("\nVous avez déverrouillé la porte !\n")
                     return True
             print("\nAucune porte associée à cette clé n'est accessible depuis cette pièce.\n")
             return False
@@ -720,6 +707,11 @@ class Actions:
             return False
         
         print(game.player.current_room.monsters[monster_fighting_name].begin_attack())
+
+        if game.player.weapons == None or game.player.weapons.equiped == False:
+            game.lose()
+            return False
+            
         player.fight(player.current_room.monsters[monster_fighting_name])
         return True
     
@@ -728,7 +720,7 @@ class Actions:
         player = game.player
         l = len(list_of_words)
        
-        if l != number_of_parameter + 1:
+        if l < number_of_parameter + 1:
             command_word = list_of_words[0]
             print(MSG1.format(command_word=command_word))
             return False
@@ -742,3 +734,28 @@ class Actions:
         player.weapons = player.inventory[weapons_equip]
         player.equip(player.weapons)
         return True
+    
+    def read(game, list_of_words, number_of_parameter):
+        player = game.player
+        l = len(list_of_words)
+       
+        if l < number_of_parameter + 1:
+            command_word = list_of_words[0]
+            print(MSG1.format(command_word=command_word))
+            return False
+        
+        book = list_of_words[1]
+
+        if book.lower() in player.current_room.inventory:
+            player.read(player.current_room.inventory[book.lower()])
+            return True
+        
+        if book.lower() in player.inventory:
+            player.read(player.inventory[book.lower()])
+            return True
+        
+        print("Vous n'avez pas ce livre à disposition.")
+        return False
+          
+        
+        

@@ -12,10 +12,11 @@ class Item:
         weight (float): poids en kilogrammes
     """
 
-    def __init__(self, name: str, description: str, weight: float):
+    def __init__(self, name: str, description: str, weight: float, equiped = False):
         self.name = name
         self.description = description
         self.weight = weight
+        self.equiped = equiped
 
     def __str__(self):
         return f"{self.name} : {self.description} ({self.weight} kg)"
@@ -78,10 +79,8 @@ class Torch(Item):
 class Key(Item):
     """Une clé attachée à une porte identifiée par `door_id`."""
 
-    def __init__(self, door_id: str):
-        # Nom simple pour faciliter la saisie par le joueur
-        name = "key"
-        description = f"clé pour la porte {door_id}"
+    def __init__(self, name, description, weight, door_id: str):
+        description = f"{description} (clé pour la porte {door_id})"
         weight = 0.5
         super().__init__(name, description, weight)
         self.door_id = door_id  # Identifiant de la porte associée
@@ -99,22 +98,85 @@ class Key(Item):
         
 class Weapon(Item):
     
-    def __init__(self, name: str, description: str, weight: float, damage : int):
+    def __init__(self, name: str, description: str, weight: float, damage : int, equiped = False):
         super().__init__(name,description,weight)
         self.damage = damage
+        self.equiped = equiped
 
     def isequipped(self):
-        return True
-    
+        self.equiped = True
+        
+
     def isnot_equipped(self):
-        return False
+        self.equiped = False
 
     def __str__(self):
-        return f"{self.name} : {self.description} ({self.weight} kg) ({"Equipé" if self.isequipped() else "Pas équipé"}) "
+        return f"{self.name} : {self.description} ({self.weight} kg) ({"Pas équipé" if not self.equiped else "Équipé"}) "
 
     
 
     
+class Book(Item):
+    
+    def __init__(self, name: str, description: str, weight: float, number_of_page : int, resume = None, open = False):
+        super().__init__(name,description,weight)
+        self.number_of_page = number_of_page
+        self.open = open
+        self.resume = resume if resume else "Ce livre n'est pas très intéressant"
+
+    def read_description(self):
+        return f"{self.resume}"
+    
+    def enigma_description_begin(self):
+        a = "En Feuilletant les Pages Vous Remarquez que le mot Enigma est Entouré en Gras..."
+        b = "En Allant à la Page dédié à Enigma, Vous Constatez qu'une Image à été Gribouillé et une énigme."
+        return f"{a}\n{b}"
+    
+    def enigma_description(self):
+        a = "Né dans les profondeurs, je ne verrai jamais les cimes. Je reste tapi dans l'ombre pour vous ramener, un jour, là d'où je viens."
+        b = "Qui suis-je ?"
+        return f"{a}\n{b}"
+    
+class InvisibilityCloak(Item):
+    """Une cape d'invisibilité qui rend le joueur invisible aux monstres."""
+
+    def __init__(self, name: str = "invisibility_cloak", description: str = "une cape qui semble à première vue ordinaire", weight: float = 1.0):
+        super().__init__(name, description, weight)
+        self.worn = False
+
+    def use(self, player):
+        """Active ou désactive la cape d'invisibilité.
+
+        Lorsque la cape est portée, les monstres ne peuvent pas détecter le joueur.
+        """
+        if not self.worn:
+            player.invisible = True
+            return "Vous enfilez la cape d'invisibilité. Vous êtes maintenant invisible aux monstres."
+        else:
+            player.invisible = False
+            return "Vous retirez la cape d'invisibilité. Vous êtes à nouveau visible aux monstres."
+
+
+class Desintegrator(Weapon):
+    """ Une arme de type désintegrateur futuriste"""
+
+    def __init__(self, name = "desintegrator", description = "un pistolet laser futuriste", weight = 2.0, damage = 200, equiped = False, usable = 1):
+        super().__init__(name, description, weight, damage, equiped)
+        self.usable = usable # Nombre d'utilisation restante
+
+    def attack(self, player, target):
+        if self.usable > 0:
+            target.health -= self.damage
+            self.usable -= 1
+            return f'Vous utilisez le desintegrateur sur {target.name} : il lui reste {target.health} PV. Le desintegrateur peut être utilisé {self.usable} fois.'
+        else:
+            return "Le désintegrateur ne fonctionne plus, reserve épuisée." 
+            
+        
+
+
+        
+
 
         
 

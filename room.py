@@ -7,7 +7,7 @@ from door import Door
 class Room:
 
     # Define the constructor. 
-    def __init__(self, name, description, items=None, dark=False):
+    def __init__(self, name, description, items=None, dark=False, door = None):
         self.name = name
         self.description = description
         self.exits = {}
@@ -18,6 +18,8 @@ class Room:
             self.inventory = items
         self.characters = {}
         self.monsters = {}
+        self.door = door if door is not None else []
+        
         
 
 
@@ -72,8 +74,8 @@ class Room:
         return f"\nVous êtes {self.description}\n\n{self.get_exit_string()}\n"
     
 
-    def add_item(self, item: Item):
-        self.inventory[item.name.lower()] = item
+    def add_item(self, item):
+        self.inventory[item.name] = item
 
 
     def take(self, item_name, player):
@@ -98,5 +100,9 @@ class Room:
             return True
         return False
     
+
+
+
+
 
 

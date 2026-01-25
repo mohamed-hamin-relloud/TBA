@@ -1,13 +1,15 @@
 # Define the Player class.
-from item import Item, Beamer, Weapon
+from item import Item, Beamer, Weapon, Book, Key
 from door import Door
 from quest import QuestManager
+
+
 
 
 class Player():
 
     # Define the constructor.
-    def __init__(self, name, current_room=None, history=None, max_weight=10.0, weapons = None, hp=60):
+    def __init__(self, name, current_room=None, history=None, max_weight=10.0, weapons = None, hp=20, invisible = False):
         """Initialise le joueur.
 
         Args:
@@ -30,12 +32,26 @@ class Player():
         self.rewards = []  # List to store earned rewards
         self.weapons = weapons
         self.hp = hp
-
+        self.game = None
+        self.invisible = invisible
+        self.equiped_weapons = []
     
-        
+   
+    
     def equip(self, weapons):
-        print(f"Vous vous êtes équipé de {weapons.name}!")
-        weapons.isequipped()
+        if isinstance(weapons, Weapon):
+            if weapons not in self.equiped_weapons:
+                print(f"Vous vous êtes équipé de {weapons.name}!")
+                weapons.isequipped()
+                self.equiped_weapons.append(weapons)
+
+            else:
+                print(f"Vous êtes déjà équipé de {weapons.name}")
+            return True
+        else:
+            print(f"{weapons.name} n'est pas une arme, vous ne pouvez l'équiper comme une arme.")
+            print(self.equiped_weapons)
+            return False
 
             
     def get_history(self):
@@ -44,16 +60,27 @@ class Player():
             if i is not None:
                 print(f"\t {i.description}")
         return ""
-       
+    
+
 
     # Define the move method.
     def move(self, direction):
         # Get the next room from the exits dictionary of the current room.
-        Directions = ['NORD','Nord','nord','n','N', "S", 'sud','s','Sud','SUD', "O", 'o', 'ouest', 'Ouest','OUEST','E', 'e','est','EST', 'Est', "U", 'u', 'up', 'Up', 'UP',"D", 'd','down','Down', 'DOWN']
-        if direction not in Directions:
+        direction_map = {
+            'nord': 'N', 'north': 'N', 'n': 'N',
+            'sud': 'S', 'south': 'S', 's': 'S',
+            'ouest': 'O', 'west': 'O', 'o': 'O',
+            'est': 'E', 'east': 'E', 'e': 'E',
+            'up': 'U', 'u': 'U',
+            'down': 'D', 'd': 'D',
+        }
+        canonical = direction_map.get(direction.lower())
+        if canonical is None:
             print(f"la commande {direction} n'est pas valide ! Vous ne vous déplacez.")
             return None
-        direction = direction[0].upper()
+       
+        
+        direction = direction.lower()[0].upper()
         next_exit = self.current_room.exits.get(direction)   
         
         
@@ -73,28 +100,31 @@ class Player():
         # Increment move counter and check movement objectives
         self.move_count += 1
         self.quest_manager.check_counter_objectives("Se déplacer", self.move_count)
-
+         
         # If the exit is a Door, check its lock state and get the target room
-        if isinstance(next_exit, Door):
-            if next_exit.locked:
-                print("\nLa porte est verrouillée.\n")
-                return False
-            next_room = next_exit.room
-        else:
-            next_room = next_exit
-
+        next_room = next_exit
+         
+        # Check if there's a locked door to the next room
+        for porte in self.current_room.door:
+            if porte.room_to == next_room:
+                if porte.locked:
+                    print("\nLa porte est verrouillée.\n")
+                    return False
+                break
+        
+        self.current_room = next_room
+                
         # Record visit in history and move
         self.history.append(next_room)
         self.current_room = next_room
         print(self.current_room.get_long_description())
         print(self.get_history())
-        print([i.name for i in self.history])
         return True
     
     def get_inventory(self):
         if not self.inventory:
             return f"Votre inventaire est vide. Poids actuel: {self.current_weight}/{self.max_weight} kg."
-        items_str = "\n".join(f"    - {item}" for item in self.inventory)
+        items_str = "\n".join(f"    - {self.inventory[item]}" for item in self.inventory)
         return f"Vous disposez des items suivants :\n{items_str}\nPoids actuel: {self.current_weight}/{self.max_weight} kg." 
     
     def use_beamer(self):
@@ -161,14 +191,63 @@ class Player():
     def weapons_attack(self, weapon):
         print(f"Vous attaquez avec {weapon.name}!")
 
-    def fighting(self, target):
-        self.weapons_attack(self.weapons)
-        target.fighting(self)
-        target.health-= self.weapons.damage
-        self.hp -= target.attack_damage
+    def choose_weapon(self):
+        # 1. On transforme le dictionnaire d'inventaire en liste pour avoir un ordre
+        weapons_list = list(self.weapons)
+    
+        if not weapons_list:
+            print("Votre inventaire est vide.")
+            return None
 
-        print(f"Vous avez maintenant {self.hp} PV!")
-        print(f"{target.name} à maintenant {target.health} PV!")
+        print("\nChoisissez un objet :")
+        # 2. enumerate(..., 1) commence à compter à 1 au lieu de 0 pour l'utilisateur
+        for i, weapons_select in enumerate(weapons_list, 1):
+            print(f"{i}. {weapons_select.name}")
+
+        # 3. Récupération du choix avec sécurité
+        try:
+            choice = int(input("\nEntrez le numéro de l'objet : "))
+        
+        # Vérification si l'indice est bien dans la liste
+            if 1 <= choice <= len(weapons_list):
+                selected_item = weapons_list[choice - 1]   
+                print(f"Vous avez choisi : {selected_item.name}")
+                return selected_item
+            else:
+                print("Numéro invalide.")
+        except ValueError:
+            print("Veuillez entrer un chiffre.")
+    
+        return None
+        
+        
+    def fighting(self, target):
+        in_fight = True
+        print("Le combat commence !")
+        print("Avec quelle arme voulez-vous attaquer ? Choississez le numéro correspondant :")
+        self.choose_weapon()
+        self
+        while in_fight:
+            attack = input(">")
+            self.weapons_attack(self.weapons)
+            target.fighting()
+            target.health-= self.weapons.damage 
+            self.hp -= target.attack_damage
+
+            if self.hp <= 0 and target.health > 0:
+                self.game.lose()
+                self.hp -= self.hp
+                in_fight = False
+            
+            if target.health <= 0 and self.hp > 0:
+                self.game.win(target)
+                target.health -= target.health
+                in_fight = False
+
+            print(f"Vous avez maintenant {self.hp} PV!")
+            print(f"{target.name} à maintenant {target.health} PV!")
+
+        
 
     def fight(self, target):
         """
@@ -197,9 +276,36 @@ class Player():
             
             else:
                 print("commandes non valides")
-
-
     
+    def resolve_enigma(self):
+        resolving = True
+        while resolving:
+            answer = input(">")
+            
+            if answer.lower() == "le démon" or answer.lower() == "un démon":
+                resolving = False
+                print("Vous avez trouvé le mot mystère!")
+                self.quest_manager.check_action_objectives("resoudre", "enigma")
+                self.quest_manager.check_action_objectives("prendre", "silverkey")
+                self.inventory["clé_en_argent"] = Key("clé_en_argent", "Clé en Argent poussièreux", 0.5, 0x01)
+                
+            else:
+                print("Ca ne semble pas être correcte...")
+    
+    def read(self, book):
+        if book == None:
+            return False
+        if book.name.lower() == 'livre_marron':
+            print(book.enigma_description_begin())
+            print(book.enigma_description())
+            self.resolve_enigma()
+            return True
+        else:
+            print(book.read_description())
+            return True
+
+            
+
     
 
 
