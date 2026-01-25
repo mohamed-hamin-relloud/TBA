@@ -1,5 +1,5 @@
 # Define the Player class.
-from item import Item, Beamer, Weapon, Book, Key
+from item import Item, Beamer, Weapon, Book, Key, Desintegrator
 from door import Door
 from quest import QuestManager
 
@@ -9,7 +9,7 @@ from quest import QuestManager
 class Player():
 
     # Define the constructor.
-    def __init__(self, name, current_room=None, history=None, max_weight=10.0, weapons = None, hp=20, invisible = False):
+    def __init__(self, name, current_room=None, history=None, max_weight=10.0, weapons = None, hp=35, invisible = False):
         """Initialise le joueur.
 
         Args:
@@ -39,15 +39,27 @@ class Player():
    
     
     def equip(self, weapons):
+        if isinstance(weapons, Desintegrator):
+            if weapons not in self.equiped_weapons:
+                print(f'Vous vous êtes équipé de {weapons.name}!')
+                weapons.equiped = True
+                self.equiped_weapons.append(weapons)
+                return True
+            else:
+                print(f"Vous êtes déjà équipé de {weapons.name}")
+            return True
+            
+
         if isinstance(weapons, Weapon):
             if weapons not in self.equiped_weapons:
                 print(f"Vous vous êtes équipé de {weapons.name}!")
                 weapons.isequipped()
                 self.equiped_weapons.append(weapons)
-
+                return True
             else:
                 print(f"Vous êtes déjà équipé de {weapons.name}")
             return True
+        
         else:
             print(f"{weapons.name} n'est pas une arme, vous ne pouvez l'équiper comme une arme.")
             print(self.equiped_weapons)
@@ -113,7 +125,12 @@ class Player():
                 break
         
         self.current_room = next_room
-                
+        
+        #if isinstance(self.current_room, Door):
+            #next_room = self.current_room.room_to
+        #else:
+            #next_room = self.current_room
+
         # Record visit in history and move
         self.history.append(next_room)
         self.current_room = next_room
@@ -188,20 +205,22 @@ class Player():
                     print(f"  • {reward}")
                 print()
     
-    def weapons_attack(self, weapon):
-        print(f"Vous attaquez avec {weapon.name}!")
-
+    def weapons_attack(self, weapon = None):
+        if weapon:
+            print(f"Vous attaquez avec {weapon.name}!")
+        else:
+            print("Vous n'avez pas choisi d'arme pour attaquer.")
+    
     def choose_weapon(self):
         # 1. On transforme le dictionnaire d'inventaire en liste pour avoir un ordre
-        weapons_list = list(self.weapons)
     
-        if not weapons_list:
+        if not self.equiped_weapons:
             print("Votre inventaire est vide.")
             return None
 
         print("\nChoisissez un objet :")
         # 2. enumerate(..., 1) commence à compter à 1 au lieu de 0 pour l'utilisateur
-        for i, weapons_select in enumerate(weapons_list, 1):
+        for i, weapons_select in enumerate(self.equiped_weapons, 1):
             print(f"{i}. {weapons_select.name}")
 
         # 3. Récupération du choix avec sécurité
@@ -209,32 +228,42 @@ class Player():
             choice = int(input("\nEntrez le numéro de l'objet : "))
         
         # Vérification si l'indice est bien dans la liste
-            if 1 <= choice <= len(weapons_list):
-                selected_item = weapons_list[choice - 1]   
+            if 1 <= choice <= len(self.equiped_weapons):
+                selected_item = self.equiped_weapons[choice - 1]   
                 print(f"Vous avez choisi : {selected_item.name}")
                 return selected_item
             else:
                 print("Numéro invalide.")
         except ValueError:
             print("Veuillez entrer un chiffre.")
+        except AttributeError:
+            print("L'arme choisie n'existe pas.")
     
-        return None
+        return False
         
         
     def fighting(self, target):
         in_fight = True
         print("Le combat commence !")
         print("Avec quelle arme voulez-vous attaquer ? Choississez le numéro correspondant :")
-        self.choose_weapon()
-        self
+        self.weapons = self.choose_weapon()
+        if not self.weapons or not isinstance(self.weapons, (Weapon, Desintegrator)):
+            print("Vous n'avez pas d'arme équipée, vous ne pouvez pas combattre.")
+            self.game.lose()
+            return False
         while in_fight:
             attack = input(">")
             self.weapons_attack(self.weapons)
             target.fighting()
             target.health-= self.weapons.damage 
             self.hp -= target.attack_damage
+            
+            if self.hp < 0:
+                self.hp = 0
+            if target.health < 0:
+                target.health = 0   
 
-            if self.hp <= 0 and target.health > 0:
+            if (self.hp <= 0 and target.health > 0) or (self.hp == 0 and target.health <= 0):
                 self.game.lose()
                 self.hp -= self.hp
                 in_fight = False
@@ -243,10 +272,11 @@ class Player():
                 self.game.win(target)
                 target.health -= target.health
                 in_fight = False
-
+            
             print(f"Vous avez maintenant {self.hp} PV!")
             print(f"{target.name} à maintenant {target.health} PV!")
-
+        
+            
         
 
     def fight(self, target):
@@ -286,7 +316,7 @@ class Player():
                 resolving = False
                 print("Vous avez trouvé le mot mystère!")
                 self.quest_manager.check_action_objectives("resoudre", "enigma")
-                self.quest_manager.check_action_objectives("prendre", "silverkey")
+                self.quest_manager.check_action_objectives("prendre", "clé_en_argent")
                 self.inventory["clé_en_argent"] = Key("clé_en_argent", "Clé en Argent poussièreux", 0.5, 0x01)
                 
             else:
@@ -304,6 +334,14 @@ class Player():
             print(book.read_description())
             return True
 
+    def health_status(self):
+        print("\nStatut de santé :")
+        print(f"\t PV : {self.hp}")
+        for weapon in self.equiped_weapons:
+            print(f"\t Arme équipée : {weapon.name} (Dégâts : {weapon.damage})")
+        return True         
+    
+   
             
 
     

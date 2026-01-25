@@ -53,13 +53,13 @@ class Beamer(Item):
 class Torch(Item):
     """Une torche que l'on peut allumer pour éclairer la pièce.
 
-    - attribut `lit` (bool) : état de la torche
+    - attribut `state` (bool) : état de la torche
     - `use(player)` : allume/éteint la torche et modifie `player.current_room.dark` si nécessaire
     """
 
     def __init__(self, name: str = "torch", description: str = "une torche en bois qui éclaire faiblement", weight: float = 1.5):
         super().__init__(name, description, weight)
-        self.lit = False
+        self.state = False
 
     def use(self, player):
         """Allume ou éteint la torche.
@@ -67,8 +67,8 @@ class Torch(Item):
         Si la torche est allumée, la pièce courante est éclairée (dark=False).
         Si elle est éteinte, la pièce redevient sombre (dark=True).
         """
-        self.lit = not self.lit
-        if self.lit:
+        
+        if not self.state:
             player.current_room.dark = False
             return "Vous allumez la torche. La pièce est désormais éclairée."
         else:
@@ -105,10 +105,12 @@ class Weapon(Item):
 
     def isequipped(self):
         self.equiped = True
+        return True
         
 
     def isnot_equipped(self):
         self.equiped = False
+        return True
 
     def __str__(self):
         return f"{self.name} : {self.description} ({self.weight} kg) ({"Pas équipé" if not self.equiped else "Équipé"}) "
@@ -125,17 +127,17 @@ class Book(Item):
         self.resume = resume if resume else "Ce livre n'est pas très intéressant"
 
     def read_description(self):
-        return f"{self.resume}"
+        return f"\n{self.resume}\n"
     
     def enigma_description_begin(self):
         a = "En Feuilletant les Pages Vous Remarquez que le mot Enigma est Entouré en Gras..."
         b = "En Allant à la Page dédié à Enigma, Vous Constatez qu'une Image à été Gribouillé et une énigme."
-        return f"{a}\n{b}"
+        return f"\n{a}\n{b}\n"
     
     def enigma_description(self):
         a = "Né dans les profondeurs, je ne verrai jamais les cimes. Je reste tapi dans l'ombre pour vous ramener, un jour, là d'où je viens."
         b = "Qui suis-je ?"
-        return f"{a}\n{b}"
+        return f"\n{a}\n{b}\n"
     
 class InvisibilityCloak(Item):
     """Une cape d'invisibilité qui rend le joueur invisible aux monstres."""

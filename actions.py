@@ -10,7 +10,7 @@
 # The error message is different depending on the number of parameters expected by the command.
 
 from door import Door
-from item import Key, Weapon
+from item import Key, Weapon, Desintegrator, Torch, Beamer
 from character import Monster
 
 # The error message is stored in the MSG0 and MSG1 variables and formatted with the command_word variable, the first word in the command.
@@ -303,6 +303,7 @@ class Actions:
             return False
 
         player.current_room.characters[perso_talking].get_msg()
+        player.quest_manager.check_action_objectives("parler", perso_talking)
         return True
                    
     
@@ -352,6 +353,7 @@ class Actions:
             print(f"\nVous ne pouvez pas prendre '{item_name}' : capacité maximale ({player.max_weight} kg) dépassée.\n")
             return False
 
+       
         # Transfer item and update weight
         if current_room.take(item_name, player):
             player.current_weight += item.weight
@@ -413,21 +415,16 @@ class Actions:
         - If the item is a Key, attempt to unlock an adjacent Door with the same id.
         - Otherwise, if the item exposes a `use` method, call it.
         """
-        if len(list_of_words) != number_of_parameters + 1:
+        if len(list_of_words) < number_of_parameters + 1:
             command_word = list_of_words[0]
             print(MSG1.format(command_word=command_word))
             return False
         player = game.player
         item_name = list_of_words[1]
 
-        # Find the item in the player's inventory (inventory stores name->Item)
         item = player.inventory.get(item_name.lower())
 
-        if item is None:
-            print(f"\nVous n'avez pas d'item nommé '{item_name}' dans votre inventaire.\n")
-            return False
-
-        # If it's a Key, attempt to unlock a Door adjacent to the player's current room
+        #If it's a Key, attempt to unlock a Door adjacent to the player's current room
         if isinstance(item, Key):
             for porte in player.current_room.door:
                 if porte.id == item.door_id:
@@ -439,6 +436,19 @@ class Actions:
                     return True
             print("\nAucune porte associée à cette clé n'est accessible depuis cette pièce.\n")
             return False
+        
+        if isinstance(item, Torch):
+            msg = item.use(player)
+            print(f"\n{msg}\n")
+            Actions._print_room_state(game)
+            return True
+        
+        if isinstance(item, Beamer):
+            msg = item.use(player)
+            print(f"\n{msg}\n")
+            Actions._print_room_state(game)
+            return True
+
 
         # Otherwise try to call a 'use' method on the item (beamer, etc.)
         if hasattr(item, 'use'):
@@ -726,11 +736,14 @@ class Actions:
             return False
         
         weapons_equip = list_of_words[1]
-
-        if weapons_equip not in player.inventory or type(player.inventory[weapons_equip]) != Weapon:
+        if player.weapons != None:
+            player.weapons.equiped = False
+        if weapons_equip not in player.inventory:
             print("Vous n'avez pas cette arme")
             return False
-        
+        if type(player.inventory[weapons_equip]) != Weapon and type(player.inventory[weapons_equip]) != Desintegrator:
+            print("Cet objet n'est pas une arme")
+            return False
         player.weapons = player.inventory[weapons_equip]
         player.equip(player.weapons)
         return True
@@ -758,4 +771,14 @@ class Actions:
         return False
           
         
+    def status(game, list_of_words, number_of_parameter):
+        player = game.player
+        l = len(list_of_words)
+       
+        if l != number_of_parameter + 1:
+            command_word = list_of_words[0]
+            print(MSG0.format(command_word=command_word))
+            return False
         
+        player.health_status()
+        return True    
